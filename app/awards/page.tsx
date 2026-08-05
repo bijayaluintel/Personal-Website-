@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrollRevealObserver } from "@/components/ScrollRevealObserver";
 import { AwardsArchive } from "@/components/awards/AwardsArchive";
 import { AwardsHero } from "@/components/awards/AwardsHero";
 import { SiteFooter } from "@/components/home/SiteFooter";
@@ -18,6 +19,7 @@ export default async function AwardsPage() {
     <>
       <SiteHeader />
       <main id="top">
+        <ScrollRevealObserver />
         <AwardsHero eyebrow={hero.eyebrow} title={hero.title} />
         <AwardsArchive awards={awards} />
       </main>

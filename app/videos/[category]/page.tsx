@@ -4,12 +4,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
+import { ScrollRevealObserver } from "@/components/ScrollRevealObserver";
 import {
-  getVideoCategory,
   getYouTubeThumbnail,
   videoCategories,
   type VideoItem,
 } from "@/constants/videos";
+import { getVideosContent } from "@/sanity/lib/videos";
 
 export function generateStaticParams() {
   return videoCategories.map(({ slug }) => ({ category: slug }));
@@ -21,12 +22,12 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category: slug } = await params;
-  const category = getVideoCategory(slug);
-  if (!category) return {};
+  const content = await getVideosContent(slug);
+  if (!content) return {};
 
   return {
-    title: `${category.label} — Bijaya Luintel`,
-    description: category.description,
+    title: `${content.category.label} — Bijaya Luintel`,
+    description: content.category.description,
   };
 }
 
@@ -68,16 +69,19 @@ export default async function VideoCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category: slug } = await params;
-  const category = getVideoCategory(slug);
-  if (!category) notFound();
+  const content = await getVideosContent(slug);
+  if (!content) notFound();
+  const { category, navigation: categoryNavigation } = content;
+  const isYouTubeChannel = category.slug === "youtube-channel";
 
   return (
     <>
       <SiteHeader />
       <main id="top">
+        {isYouTubeChannel && <ScrollRevealObserver />}
         <section className="video-page-hero section-shell">
           <nav aria-label="Video categories" className="video-category-nav">
-            {videoCategories.map((item) => (
+            {categoryNavigation.map((item) => (
               <Link
                 aria-current={item.slug === category.slug ? "page" : undefined}
                 href={`/videos/${item.slug}`}
@@ -91,10 +95,31 @@ export default async function VideoCategoryPage({
           <h1>{category.label}</h1>
         </section>
 
+        {category.channel && (
+          <section className="youtube-channel-intro section-shell" aria-label="Bijaya Luintel YouTube channel">
+            <div className="youtube-channel-mark" aria-hidden="true">
+              <span />
+            </div>
+            <div className="youtube-channel-copy">
+              <p>Official channel</p>
+              <h2>Bijaya Luintel</h2>
+              <span>{category.channel.handle}</span>
+            </div>
+            <p className="youtube-channel-note">Poetry, spoken word, thoughtful conversations, and stories—collected in one place.</p>
+            <a className="youtube-channel-link" href={category.channel.href} rel="noreferrer" target="_blank">
+              Visit channel <span>↗</span>
+            </a>
+          </section>
+        )}
+
         <section className="video-library section-shell" aria-label={`${category.label} links`}>
           <div className="video-library-grid">
             {category.items.map((item, index) => (
-              <article className={`video-card${index === 0 ? " is-featured" : ""}`} key={item.number}>
+              <article
+                className={`video-card${index === 0 ? " is-featured" : ""}`}
+                data-reveal={isYouTubeChannel ? "up" : undefined}
+                key={item.number}
+              >
                 {item.href ? (
                   <a aria-label={`${item.title} हेर्नुहोस्`} href={item.href} rel="noreferrer" target="_blank">
                     <VideoVisual item={item} />
