@@ -1,10 +1,5 @@
-"use client";
-
 import Image from "next/image";
-import { useState } from "react";
 import type { AwardItem } from "@/constants/awards";
-
-const AWARDS_PER_PAGE = 4;
 
 function AwardVisual({ award }: { award: AwardItem }) {
   return (
@@ -32,16 +27,11 @@ function AwardVisual({ award }: { award: AwardItem }) {
 }
 
 export function AwardsArchive({ awards }: { awards: AwardItem[] }) {
-  const [visibleCount, setVisibleCount] = useState(AWARDS_PER_PAGE);
-  const visibleAwards = awards.slice(0, visibleCount);
-  const remainingCount = awards.length - visibleCount;
-  const hasMoreAwards = remainingCount > 0;
-
   return (
     <section className="awards-archive section-shell" aria-label="Awards archive">
       <div className="award-entries">
-        {visibleAwards.map((award) => (
-          <article className="award-entry" key={award.id ?? award.number}>
+        {awards.map((award) => (
+          <article className="award-entry" data-reveal="up" key={award.id ?? award.number}>
             <AwardVisual award={award} />
             <div className="award-entry-copy">
               <div className="award-meta">
@@ -58,19 +48,6 @@ export function AwardsArchive({ awards }: { awards: AwardItem[] }) {
           </article>
         ))}
       </div>
-      {hasMoreAwards && (
-        <div className="awards-reveal">
-          <button
-            aria-label={`Show ${Math.min(AWARDS_PER_PAGE, remainingCount)} more awards`}
-            onClick={() => setVisibleCount((count) => count + AWARDS_PER_PAGE)}
-            type="button"
-          >
-            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-              <path d="m7 10 5 5 5-5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
-      )}
     </section>
   );
 }
