@@ -15,7 +15,7 @@ export function BookSection() {
           </div>
         </div>
         <div className="book-copy">
-          <p className="eyebrow eyebrow-light">{book.eyebrow}</p>
+          {/* <p className="eyebrow eyebrow-light">{book.eyebrow}</p> */}
           <h2>{book.title}</h2>
           <p className="section-description">{book.description}</p>
           <a
