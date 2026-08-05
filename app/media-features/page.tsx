@@ -6,6 +6,7 @@ import {
   mediaFeaturesPageData,
   type MediaFeatureItem,
 } from "@/constants/mediaFeatures";
+import { getMediaFeaturesContent } from "@/sanity/lib/mediaFeatures";
 
 export const metadata: Metadata = {
   title: "Media Features — Bijaya Luintel",
@@ -33,8 +34,8 @@ function FeatureImage({ item }: { item: MediaFeatureItem }) {
   );
 }
 
-export default function MediaFeaturesPage() {
-  const { eyebrow, label, items } = mediaFeaturesPageData;
+export default async function MediaFeaturesPage() {
+  const { eyebrow, label, items } = await getMediaFeaturesContent();
 
   return (
     <>
@@ -48,7 +49,7 @@ export default function MediaFeaturesPage() {
         <section className="media-feature-library section-shell" aria-label="Media features">
           <div className={`media-feature-grid${items.length === 3 ? " has-three-items" : ""}`}>
             {items.map((item, index) => (
-              <article className={`media-feature-card${index === 0 ? " is-featured" : ""}`} key={item.number}>
+              <article className={`media-feature-card${index === 0 ? " is-featured" : ""}`} key={item.id ?? item.number}>
                 {item.href ? (
                   <a aria-label={`${item.title} पढ्नुहोस्`} href={item.href} rel="noreferrer" target="_blank">
                     <FeatureImage item={item} />

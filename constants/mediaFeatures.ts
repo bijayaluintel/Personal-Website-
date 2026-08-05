@@ -1,4 +1,5 @@
 export type MediaFeatureItem = {
+  id?: string;
   number: string;
   title: string;
   description: string;
@@ -8,7 +9,7 @@ export type MediaFeatureItem = {
   imageAlt: string;
 };
 
-type MediaFeaturesPageData = {
+export type MediaFeaturesPageData = {
   label: string;
   eyebrow: string;
   description: string;
