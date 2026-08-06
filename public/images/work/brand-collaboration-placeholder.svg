@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">Brand collaboration image placeholder</title>
+  <description id="description">A neutral editorial placeholder to be replaced with a campaign photograph.</description>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b9c0ae"/>
+      <stop offset="1" stop-color="#e7ddd0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#background)"/>
+  <circle cx="1320" cy="160" r="310" fill="none" stroke="#faf8f3" stroke-opacity=".28" stroke-width="2"/>
+  <path d="M0 675 510 395l330 195 300-160 460 290v180H0Z" fill="#263027" fill-opacity=".13"/>
+  <g fill="#1f231e">
+    <text x="110" y="710" font-family="Georgia, serif" font-size="72">Brand collaboration</text>
+    <text x="114" y="770" font-family="Arial, sans-serif" font-size="24" letter-spacing="5" opacity=".62">REPLACE WITH YOUR CAMPAIGN IMAGE</text>
+  </g>
+</svg>

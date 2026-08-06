@@ -4,6 +4,7 @@ export type NavigationItem = LinkItem & {
 };
 
 export type FeaturedWriting = {
+  contentType: "writing" | "video";
   number: string;
   type: string;
   title: string;
@@ -25,6 +26,7 @@ export const siteData = {
         { label: "Poetry", href: "/writings/poems" },
         { label: "Stories", href: "/writings/stories" },
         { label: "Memoirs", href: "/writings/memoirs" },
+        { label: "Others", href: "/writings/others" },
       ],
     },
     {
@@ -34,10 +36,12 @@ export const siteData = {
         { label: "Poetry & Performances", href: "/videos/poetry-performances" },
         { label: "Podcasts & Interviews", href: "/videos/podcasts" },
         { label: "Documentaries", href: "/videos/documentaries" },
+        { label: "YouTube Channel", href: "/videos/youtube-channel" },
       ],
     },
-    { label: "Media features", href: "/media-features" },
     { label: "Work & collaboration", href: "/work-and-collaboration" },
+    { label: "Media features", href: "/media-features" },
+    { label: "Experience", href: "/experience" },
     { label: "Awards", href: "/awards" },
   ] satisfies NavigationItem[],
   hero: {
@@ -51,13 +55,10 @@ export const siteData = {
     imageAlt: "Placeholder portrait for Bijaya Luintel",
   },
   book: {
-    eyebrow: "कविता सङ्ग्रह",
+    // eyebrow: "कविता सङ्ग्रह",
     title: "समयका खुकुला चप्पल",
     description:
       "कविता सङ्ग्रह “समयका खुकुला चप्पल” भित्र जिजीविषा छन् , जहाँ मानिस जीवनका अप्ठ्याराहरुलाई सहजताका साथ स्वीकार्न सिक्दछ , त्यस्तै प्रेम छ, जहाँ कलिलो उमेरका रौसे प्रेम देखि परिपक्‍व प्रेमका भावनाहरु छन् । देश छ, जहाँ विचार र भावना एकआपसमा संवाद गर्दछन् । अनि छ आध्यात्म, जहाँ मानिस खोज्दछ, आफ्नै अस्तित्व र जीवनलाई प‌ृथक ढङ्गबाट हेर्न सिक्दछ । समयका खुकुला चप्पलका सम्पूर्ण कविताहरुको गर्भमा एक यस्तो अव्यक्त भाव छ जसले बारम्बार भनिरहन्छ कि जीवन नश्वर छ र मानिस समयको खुकुलो चप्पल हो, जसको नियतिमा कुनैदिन समयका गोडाबाट फुस्कन लेखिएको छ ।",
-    // praise:
-    //   "म ओइलिन लागेको , गमलाको एक फूल हुँ\nहारेर संसारसँग आफूलाई नास्‍न पनि सक्छु\nखोसेर पानी आकाशसँग हाँस्‍न पनि सक्छु",
-    // praiseBy: "",
     video: {
       label: "पुस्तक प्रकाशनको कथा",
       prompt: "भिडियो हेर्नुहोस्",
@@ -65,7 +66,7 @@ export const siteData = {
       thumbnail: "https://i.ytimg.com/vi/fCU-4prZB2s/hqdefault.jpg",
       thumbnailAlt: "समयका खुकुला चप्पल पुस्तक प्रकाशनसम्बन्धी भिडियो",
     },
-    cover: "/images/समयका-खुकुला-चप्पल–विजय-लुईटेल_Cover.jpg",
+    cover: "/images/समयका-खुकुला-चप्पल–विजय-लुईटेल.png",
     coverAlt: "Cover of समयका-खुकुला-चप्पल by Bijaya Luintel",
     links: [
       { label: "Buy paperback", href: "#" },
@@ -74,17 +75,64 @@ export const siteData = {
   },
   quotes: [
     {
-      type: "From the book",
-      quote:
-        // "I carried the morning with me—folded small, like a letter I was not yet ready to read.",
-        "म ओइलिन लागेको , गमलाको एक फूल हुँ\nहारेर संसारसँग आफूलाई नास्‍न पनि सक्छु\nखोसेर पानी आकाशसँग हाँस्‍न पनि सक्छु",
-      source: "समयका खुकुला चप्पल",
+      type: "Quotes",
+      items: [
+        {
+          quote: "म ओइलिन लागेको , गमलाको एक फूल हुँ",
+          source: "समयका खुकुला चप्पल",
+          lang: "ne",
+        },
+        {
+          quote: "हारेर संसारसँग आफूलाई नास्‍न पनि सक्छु",
+          source: "समयका खुकुला चप्पल",
+          lang: "ne",
+        },
+        {
+          quote: "खोसेर पानी आकाशसँग हाँस्‍न पनि सक्छु",
+          source: "समयका खुकुला चप्पल",
+          lang: "ne",
+        },
+        {
+          quote: "यहाँ पुस्तकबाट अर्को चयनित उद्धरण राख्नुहोस्।",
+          source: "नयाँ उद्धरण",
+          lang: "ne",
+        },
+        {
+          quote: "यहाँ पुस्तकबाट अर्को स्मरणीय पङ्क्ति राख्नुहोस्।",
+          source: "नयाँ उद्धरण",
+          lang: "ne",
+        },
+      ],
     },
     {
-      type: "Reader note",
-      quote:
-        "Bijaya’s poems have the rare gift of feeling both deeply personal and entirely ours.",
-      source: "Mira S. · Reader",
+      type: "Reader’s notes",
+      items: [
+        {
+          quote: "Bijaya’s poems have the rare gift of feeling both deeply personal and entirely ours.",
+          source: "Mira S. · Reader",
+          lang: "en",
+        },
+        {
+          quote: "यहाँ पाठकको छोटो प्रतिक्रिया राख्नुहोस्।",
+          source: "Reader note 02",
+          lang: "ne",
+        },
+        {
+          quote: "यहाँ पुस्तकबारे अर्को पाठकीय अनुभव राख्नुहोस्।",
+          source: "Reader note 03",
+          lang: "ne",
+        },
+        {
+          quote: "यहाँ कविताले पाठकमा छोडेको अनुभूति राख्नुहोस्।",
+          source: "Reader note 04",
+          lang: "ne",
+        },
+        {
+          quote: "यहाँ अर्को छोटो र अर्थपूर्ण पाठक प्रतिक्रिया राख्नुहोस्।",
+          source: "Reader note 05",
+          lang: "ne",
+        },
+      ],
     },
   ],
   newsletter: {
@@ -98,37 +146,37 @@ export const siteData = {
   },
   writings: [
     {
+      contentType: "writing",
       number: "01",
       type: "कविता",
       title: "म कहाँ जान्छु ?",
       excerpt:
         "म स्वतन्त्र छु तर आवश्यकताले बाँध्दछ। म माटो हुँ, मलाई माटैले खानेछ…",
-      href: "/writings/poems/blog-post",
-      image:
-        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNq8HAdLiH1GizKSZD0HWrKFNcEB7CSS1Tbhl175LrfBDf2HJoy4Bl0PtOm1gburJJnbL99-Z8ZNtYR8wwS0Q0is3sN4a0msoi40JSHJQTVLX9-A0U7tILxroCG8QzP7W_1roK_r_Ssbts-DSnI4V69G2bCuDQKTV5c7qVX2ySxL_oaFEgAvO7VGUYH_g/w640-h360/%E0%A4%AE%20%E0%A4%95%E0%A4%B9%E0%A4%BE%E0%A4%81%20%E0%A4%9C%E0%A4%BE%E0%A4%A8%E0%A5%8D%E0%A4%9B%E0%A5%81%20.png",
+      href: "/writings/poems",
+      image: "/images/bijaya.jpg",
       imageAlt: "म कहाँ जान्छु कविताको चित्र",
     },
     {
+      contentType: "writing",
       number: "02",
       type: "कथा",
       title: "म घामभन्दा छिटो भएँ",
       excerpt:
         "उठेर बाहिर हेरेँ, पुरै अन्धकार थियो। चिसो बिहानीमा सुरु भएको एउटा यात्रा…",
-      href: "/writings/stories/blog-post_27",
-      image:
-        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgvZ3Udnpo6_zY1SxGEReRcmtEDdaB07OAZZiK2mwr_gjBOQSxQhSKkZQEy17HgZ1UBHukqLKFdzrEP7H8zgwiwRpJ2wIE-IcDfWar6OhDsOfm02i-Df54eK7vF3RwqpNUJOOHCmYu_JnM/s640/man-sitting-on-edge-facing-sunset-915972.jpg",
+      href: "/writings/stories",
+      image: "/images/समयका-खुकुला-चप्पल–विजय-लुईटेल_Cover.jpg",
       imageAlt: "सूर्यास्त हेर्दै गरेको मानिस",
     },
     {
+      contentType: "video",
       number: "03",
-      type: "संस्मरण",
-      title: "आज उसको सम्झना आयो",
+      type: "Video article",
+      title: "How I published my first poetry book",
       excerpt:
-        "धेरै समयदेखि आफूभित्र गुम्सेको खिन्नता उनको सामु पोखूँझैँ लाग्यो…",
-      href: "/writings/memoirs/blog-post_14",
-      image:
-        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiKA3Y9NF2Tkzue5YngbAz6_cqV_kQP_IrAxTLooZuhsXk3pMw6g3wcXklB53VKoOkGUpQu_L1ytNkDuIWeGAT5LXunfGwk9zQmQFxzaDkfc92AMt7-C0Kqy6bXJGx1Ci__f5B6Gj5YrE4/s640/black-and-white-couple-hands-1004014.jpg",
-      imageAlt: "हात समातेको जोडीको श्यामश्वेत चित्र",
+        "समयका खुकुला चप्पल तयार पार्ने, सम्पादन गर्ने र आफ्नै प्रयासमा प्रकाशित गर्ने यात्राको कथा।",
+      href: "https://www.youtube.com/watch?v=fCU-4prZB2s",
+      image: "https://i.ytimg.com/vi/fCU-4prZB2s/hqdefault.jpg",
+      imageAlt: "How I published my first poetry book video thumbnail",
     },
   ] satisfies FeaturedWriting[],
   socialLinks: [

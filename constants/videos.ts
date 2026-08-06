@@ -14,6 +14,10 @@ export type VideoCategory = {
   eyebrow: string;
   description: string;
   items: VideoItem[];
+  channel?: {
+    href: string;
+    handle: string;
+  };
 };
 
 /*
@@ -161,10 +165,52 @@ export const videoCategories: VideoCategory[] = [
       },
     ],
   },
+  {
+    slug: "youtube-channel",
+    label: "YouTube Channel",
+    eyebrow: "Latest from the channel",
+    description:
+      "Original poems, spoken-word performances, conversations, and stories from Bijaya Luintel.",
+    channel: {
+      href: "https://www.youtube.com/@bijayaluintel",
+      handle: "@bijayaluintel",
+    },
+    items: [
+      { number: "01", title: "A call for Unity — Sunsari Nepal", description: "A reflection on humanity, harmony, and the strength found in unity.", source: "Latest short", href: "https://www.youtube.com/shorts/bNYxvF-Lv78", thumbnailAlt: "A call for Unity video thumbnail" },
+      { number: "02", title: "धुवाँ", description: "An original Nepali poem presented in a short video.", source: "Nepali poetry", href: "https://www.youtube.com/shorts/qXoGt60s4uQ", thumbnailAlt: "धुवाँ Nepali poem video thumbnail" },
+      { number: "03", title: "Nepali Poem on Friendship", description: "A heartfelt Nepali poem about friendship and connection.", source: "Nepali poetry", href: "https://www.youtube.com/shorts/2vTkuEigRtM", thumbnailAlt: "Nepali friendship poem video thumbnail" },
+      { number: "04", title: "उमेर — The Art of Crying", description: "An original poem written and performed by Bijaya Luintel.", source: "Spoken word", href: "https://www.youtube.com/shorts/Kv4TcZFtim0", thumbnailAlt: "उमेर poem video thumbnail" },
+      { number: "05", title: "आँखाहरू", description: "A short Nepali poetry performance about eyes, love, and feeling.", source: "Nepali poetry", href: "https://www.youtube.com/shorts/wBdkhuiwcCc", thumbnailAlt: "आँखाहरू poem video thumbnail" },
+      { number: "06", title: "यात्रामा जिन्दगीको", description: "Nepali spoken-word poetry about time, travel, and moments that pass.", source: "Spoken word", href: "https://www.youtube.com/watch?v=3IXwEaB9ptc", thumbnailAlt: "यात्रामा जिन्दगीको video thumbnail" },
+      { number: "07", title: "मेटिँदो रहेछ प्रेम", description: "A poem about love slowly fading through time, silence, and distance.", source: "Poetry short", href: "https://www.youtube.com/shorts/EDCJu5-Y6YM", thumbnailAlt: "मेटिँदो रहेछ प्रेम video thumbnail" },
+      { number: "08", title: "नयाँ बर्ष — New Year Poem", description: "A Nepali poem welcoming a new year and a fresh beginning.", source: "Poetry short", href: "https://www.youtube.com/shorts/SLoFJp_Inbo", thumbnailAlt: "New Year poem video thumbnail" },
+      { number: "09", title: "तिम्रा याद", description: "A short Nepali love poem by Bijaya Luintel.", source: "Love poem", href: "https://www.youtube.com/shorts/tAU4jX8HQdU", thumbnailAlt: "तिम्रा याद love poem video thumbnail" },
+      { number: "10", title: "सम्झनाहरु", description: "A motivational Nepali poem about memories and moving forward.", source: "Motivational poem", href: "https://www.youtube.com/shorts/jceeJtB_DMY", thumbnailAlt: "सम्झनाहरु poem video thumbnail" },
+      { number: "11", title: "झरी — एक प्रेम कविता", description: "A love poem shaped by rain and the mood of the monsoon.", source: "Love poem", href: "https://www.youtube.com/shorts/kWTX-WNp3C8", thumbnailAlt: "झरी love poem video thumbnail" },
+      { number: "12", title: "My Friend Got Married — गफगाफ", description: "A conversation about emotional bonds, love, and beginning married life.", source: "Conversation", href: "https://www.youtube.com/watch?v=xQeT999FPF0", thumbnailAlt: "My Friend Got Married video thumbnail" },
+      { number: "13", title: "How Life Should Be Lived", description: "A Nepali poem reflecting on honesty, kindness, choices, and meaningful living.", source: "Life poem", href: "https://www.youtube.com/watch?v=uiguSuyEp_A", thumbnailAlt: "How Life Should Be Lived video thumbnail" },
+      { number: "14", title: "Nepali Love Poem", description: "An original romantic poem written and performed in Nepali.", source: "Love poem", href: "https://www.youtube.com/shorts/ahm5UjCYZvA", thumbnailAlt: "Nepali Love Poem video thumbnail" },
+      { number: "15", title: "How I Published My First Poetry Book", description: "The story behind Samayaka Khukula Chappal and the writer's self-publishing journey.", source: "Writing journey", href: "https://www.youtube.com/watch?v=fCU-4prZB2s", thumbnailAlt: "First poetry book publishing video thumbnail" },
+    ],
+  },
 ];
 
 export function getVideoCategory(slug: string) {
   return videoCategories.find((category) => category.slug === slug);
+}
+
+const videoCategoryNavigationOrder = [
+  "poetry-performances",
+  "podcasts",
+  "documentaries",
+  "youtube-channel",
+];
+
+export function getVideoCategoryNavigation() {
+  return videoCategoryNavigationOrder.flatMap((slug) => {
+    const category = getVideoCategory(slug);
+    return category ? [category] : [];
+  });
 }
 
 export function getYouTubeThumbnail(href?: string) {
