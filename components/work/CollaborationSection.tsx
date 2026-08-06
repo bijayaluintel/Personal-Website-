@@ -1,14 +1,13 @@
 import { siteData } from "@/constants/home";
-import { workPageData } from "@/constants/work";
 
-export function CollaborationSection() {
-  const { collaboration } = workPageData;
-
+export function CollaborationSection({ collaboration }: {
+  collaboration: { eyebrow: string; title: string; description: string };
+}) {
   return (
     <section className="collaboration-section" id="collaboration">
-      <div className="section-shell collaboration-grid">
+      <div className="section-shell collaboration-grid" data-reveal="up">
         <div className="collaboration-copy">
-          <p className="eyebrow eyebrow-light">{collaboration.eyebrow}</p>
+          <p className="eyebrow">{collaboration.eyebrow}</p>
           <h2>{collaboration.title}</h2>
           <p>{collaboration.description}</p>
         </div>
@@ -40,4 +39,3 @@ export function CollaborationSection() {
     </section>
   );
 }
-

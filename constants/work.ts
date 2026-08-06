@@ -1,4 +1,5 @@
 export type Service = {
+  key: "scriptwriting" | "copywriting" | "songwriting" | "translations" | "brand-collaborations";
   number: string;
   title: string;
   description: string;
@@ -12,6 +13,7 @@ export const workPageData = {
   },
   services: [
     {
+      key: "scriptwriting",
       number: "01",
       title: "Scriptwriting",
       description:
@@ -19,6 +21,7 @@ export const workPageData = {
       details: ["Screenplays", "Documentary narration", "Video scripts"],
     },
     {
+      key: "copywriting",
       number: "02",
       title: "Copywriting",
       description:
@@ -26,6 +29,7 @@ export const workPageData = {
       details: ["Brand storytelling", "Creative campaigns", "Web copy"],
     },
     {
+      key: "songwriting",
       number: "03",
       title: "Songwriting",
       description:
@@ -33,6 +37,7 @@ export const workPageData = {
       details: ["Musical tracks", "Acoustic pieces", "Spoken-word fusion"],
     },
     {
+      key: "translations",
       number: "04",
       title: "Translations",
       description:
@@ -40,6 +45,7 @@ export const workPageData = {
       details: ["Poetry", "Prose", "Media"],
     },
     {
+      key: "brand-collaborations",
       number: "05",
       title: "Brand collaborations",
       description:

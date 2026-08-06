@@ -1,15 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { getYouTubeThumbnail } from "@/constants/videos";
-import {
-  workPortfolioData,
-  type PortfolioVideo,
-} from "@/constants/workPortfolio";
-
-const INITIAL_TRAVEL_VIDEOS = 7;
-const TRAVEL_VIDEO_BATCH = 6;
+import type { PortfolioVideo } from "@/constants/workPortfolio";
+import type { WorkContent } from "@/sanity/lib/work";
 
 function PlayIcon() {
   return (
@@ -20,10 +14,11 @@ function PlayIcon() {
 }
 
 function PortfolioVisual({ video }: { video: PortfolioVideo }) {
-  const thumbnail = video.thumbnail ?? getYouTubeThumbnail(video.href);
+  const isImage = video.mediaType === "image";
+  const thumbnail = video.thumbnail ?? (isImage ? null : getYouTubeThumbnail(video.href));
 
   return (
-    <div className={`portfolio-video-visual${thumbnail ? "" : " is-placeholder"}`}>
+    <div className={`portfolio-video-visual${thumbnail ? "" : " is-placeholder"}${isImage ? " is-image" : ""}`}>
       {thumbnail ? (
         <Image
           alt={video.thumbnailAlt}
@@ -34,10 +29,10 @@ function PortfolioVisual({ video }: { video: PortfolioVideo }) {
       ) : (
         <>
           <span className="portfolio-placeholder-line" />
-          <small>Video thumbnail</small>
+          <small>{isImage ? "Campaign image" : "Video thumbnail"}</small>
         </>
       )}
-      <span className="portfolio-play"><PlayIcon /></span>
+      {!isImage && <span className="portfolio-play"><PlayIcon /></span>}
       <span className="portfolio-number">{video.number}</span>
     </div>
   );
@@ -51,7 +46,10 @@ function PortfolioCard({
   featured?: boolean;
 }) {
   return (
-    <article className={`portfolio-video-card${featured ? " is-featured" : ""}`}>
+    <article
+      className={`portfolio-video-card${featured ? " is-featured" : ""}`}
+      data-reveal="up"
+    >
       {video.href ? (
         <a aria-label={`${video.title} हेर्नुहोस्`} href={video.href} rel="noreferrer" target="_blank">
           <PortfolioVisual video={video} />
@@ -66,76 +64,48 @@ function PortfolioCard({
             <a href={video.href} rel="noreferrer" target="_blank">{video.title}</a>
           ) : video.title}
         </h4>
-        <span>{video.description}</span>
       </div>
     </article>
   );
 }
 
-export function WorkPortfolioSection({ serviceTitle }: { serviceTitle: string }) {
-  const [visibleTravelVideos, setVisibleTravelVideos] = useState(INITIAL_TRAVEL_VIDEOS);
-  const {
-    scriptwriting,
-    translation,
-    brandCollaborations,
-  } = workPortfolioData;
-
-  if (serviceTitle === "Scriptwriting") {
-    const travelVideos = scriptwriting.videos.slice(0, visibleTravelVideos);
-    const hasMoreTravelVideos = visibleTravelVideos < scriptwriting.videos.length;
-
+export function WorkPortfolioSection({
+  service,
+}: {
+  service: WorkContent["services"][number];
+}) {
+  if (service.key === "scriptwriting") {
     return (
       <div className="service-work-expanded work-portfolio is-scriptwriting">
-        <div className="portfolio-group-heading">
+        <div className="portfolio-group-heading" data-reveal="up">
           <div>
-            <p>{scriptwriting.eyebrow}</p>
-            <h3>{scriptwriting.title}</h3>
+            <p>{service.portfolio.eyebrow}</p>
+            <h3>{service.portfolio.title}</h3>
           </div>
-          <span>{scriptwriting.description}</span>
         </div>
         <div className="travel-script-grid">
-          {travelVideos.map((video, index) => (
+          {service.portfolio.items.map((video, index) => (
             <PortfolioCard featured={index === 0} key={video.number} video={video} />
           ))}
         </div>
-        {hasMoreTravelVideos && (
-          <button
-            aria-label="Show more travel-script videos"
-            className="portfolio-show-more"
-            onClick={() => setVisibleTravelVideos((count) => count + TRAVEL_VIDEO_BATCH)}
-            type="button"
-          >
-            <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
-              <path d="m7 10 5 5 5-5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        )}
       </div>
     );
   }
 
-  const group =
-    serviceTitle === "Translations"
-      ? translation
-      : serviceTitle === "Brand collaborations"
-        ? brandCollaborations
-        : null;
-
-  if (group) {
+  if (service.key === "translations" || service.key === "brand-collaborations") {
     const variant =
-      serviceTitle === "Translations" ? "is-translation" : "is-brand-collaboration";
+      service.key === "translations" ? "is-translation" : "is-brand-collaboration";
 
     return (
       <div className={`service-work-expanded work-portfolio ${variant}`}>
-        <div className="portfolio-group-heading">
+        <div className="portfolio-group-heading" data-reveal="up">
           <div>
-            <p>{group.eyebrow}</p>
-            <h3>{group.title}</h3>
+            <p>{service.portfolio.eyebrow}</p>
+            <h3>{service.portfolio.title}</h3>
           </div>
-          <span>{group.description}</span>
         </div>
         <div className="portfolio-secondary-videos">
-          {group.videos.map((video) => (
+          {service.portfolio.items.map((video) => (
             <PortfolioCard key={video.number} video={video} />
           ))}
         </div>
@@ -143,23 +113,15 @@ export function WorkPortfolioSection({ serviceTitle }: { serviceTitle: string })
     );
   }
 
-  const emptyCopy =
-    serviceTitle === "Copywriting"
-      ? {
-          label: "Copywriting portfolio",
-          title: "Words that give an idea its voice.",
-          note: "Campaigns, brand stories, and selected copy projects will live here.",
-          className: "is-copywriting",
-        }
-      : {
-          label: "Songwriting portfolio",
-          title: "Lyrics, rhythm, and stories made to be heard.",
-          note: "Selected songs, lyrics, and listening links will live here.",
-          className: "is-songwriting",
-        };
+  const emptyCopy = {
+    label: service.portfolio.eyebrow,
+    title: service.portfolio.title,
+    note: service.portfolio.emptyNote,
+    className: service.key === "copywriting" ? "is-copywriting" : "is-songwriting",
+  };
 
   return (
-    <div className={`service-work-empty ${emptyCopy.className}`}>
+    <div className={`service-work-empty ${emptyCopy.className}`} data-reveal="up">
       <div>
         <span>{emptyCopy.label}</span>
         <h3>{emptyCopy.title}</h3>
