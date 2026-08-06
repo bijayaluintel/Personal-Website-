@@ -4,23 +4,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
+import { ArticleShare } from "@/components/writings/ArticleShare";
+import { WritingBody } from "@/components/writings/WritingBody";
 import {
   getWritingCategory,
-  writingCategories,
 } from "@/constants/writings";
-import { getBlogPosts } from "@/lib/blogger";
+import {
+  getWritingPost,
+  getWritingStaticParams,
+} from "@/sanity/lib/writings";
 
-export const revalidate = 3600;
+export const revalidate = 60;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const groups = await Promise.all(
-    writingCategories.map(async (category) => {
-      const posts = await getBlogPosts(category);
-      return posts.map((post) => ({ category: category.slug, slug: post.slug }));
-    }),
-  );
-
-  return groups.flat();
+  return getWritingStaticParams();
 }
 
 export async function generateMetadata({
@@ -32,7 +30,7 @@ export async function generateMetadata({
   const category = getWritingCategory(categorySlug);
   if (!category) return {};
 
-  const post = (await getBlogPosts(category)).find((item) => item.slug === slug);
+  const post = await getWritingPost(category.slug, slug);
   if (!post) return {};
 
   return {
@@ -50,7 +48,7 @@ export default async function WritingPostPage({
   const category = getWritingCategory(categorySlug);
   if (!category) notFound();
 
-  const post = (await getBlogPosts(category)).find((item) => item.slug === slug);
+  const post = await getWritingPost(category.slug, slug);
   if (!post) notFound();
 
   const formattedDate = new Intl.DateTimeFormat("ne-NP", {
@@ -63,7 +61,7 @@ export default async function WritingPostPage({
     <>
       <SiteHeader />
       <main id="top">
-        <article className="writing-post">
+        <article className={`writing-post writing-post-${category.slug}`}>
           <header className="writing-post-header section-shell">
             <Link href={`/writings/${category.slug}`}>
               {category.label}मा फर्कनुहोस्
@@ -74,7 +72,7 @@ export default async function WritingPostPage({
           {post.image && (
             <div className="writing-post-hero section-shell">
               <Image
-                alt=""
+                alt={post.imageAlt}
                 fill
                 priority
                 sizes="(max-width: 700px) 100vw, 1100px"
@@ -82,10 +80,10 @@ export default async function WritingPostPage({
               />
             </div>
           )}
-          <div
-            className="writing-post-content"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="writing-post-content">
+            {post.body && <WritingBody value={post.body} />}
+          </div>
+          <ArticleShare title={post.title} />
         </article>
       </main>
       <SiteFooter />

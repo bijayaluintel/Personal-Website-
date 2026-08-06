@@ -5,7 +5,6 @@ export const writingCategories = [
     eyebrow: "कविता सङ्ग्रह",
     description:
       "समय, प्रेम, यात्रा र जीवनका सूक्ष्म अनुभूतिहरूलाई समेटिएका कविताहरू।",
-    bloggerLabel: "कविता",
   },
   {
     slug: "stories",
@@ -13,7 +12,6 @@ export const writingCategories = [
     eyebrow: "कथा सङ्ग्रह",
     description:
       "मानिस, सम्बन्ध र दैनिक जीवनका अनौठा मोडहरूबाट जन्मिएका छोटा तथा लामा कथाहरू।",
-    bloggerLabel: "कथा",
   },
   {
     slug: "memoirs",
@@ -21,7 +19,13 @@ export const writingCategories = [
     eyebrow: "यात्रा र सम्झना",
     description:
       "यात्रामा भेटिएका ठाउँ, मानिस र मनमा बाँकी बसेका स्मृतिका व्यक्तिगत अभिलेखहरू।",
-    bloggerLabel: "संस्मरण",
+  },
+  {
+    slug: "others",
+    label: "अन्य",
+    eyebrow: "अन्य रचना",
+    description:
+      "निबन्ध, विचार, टिप्पणी र अन्य विधामा लेखिएका विविध रचनाहरू।",
   },
 ] as const;
 

@@ -9,9 +9,9 @@ import {
   getWritingCategory,
   writingCategories,
 } from "@/constants/writings";
-import { getBlogPosts } from "@/lib/blogger";
+import { getWritingPosts } from "@/sanity/lib/writings";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export function generateStaticParams() {
   return writingCategories.map(({ slug }) => ({ category: slug }));
@@ -42,7 +42,7 @@ export default async function WritingCategoryPage({
   const category = getWritingCategory(slug);
   if (!category) notFound();
 
-  const posts = await getBlogPosts(category);
+  const posts = await getWritingPosts(category);
   const dateFormatter = new Intl.DateTimeFormat("ne-NP", {
     day: "numeric",
     month: "long",
@@ -79,7 +79,7 @@ export default async function WritingCategoryPage({
               {posts.map((post, index) => (
                 <article
                   className={`writing-archive-card${index === 0 ? " is-featured" : ""}${index > 0 && index % 6 === 0 ? " is-wide" : ""}`}
-                  key={post.href}
+                  key={post.id}
                 >
                   <span className="writing-archive-index">{String(index + 1).padStart(2, "0")}</span>
                   <Link
@@ -89,7 +89,7 @@ export default async function WritingCategoryPage({
                   >
                     {post.image ? (
                       <Image
-                        alt=""
+                        alt={post.imageAlt}
                         fill
                         sizes="(max-width: 700px) 100vw, 260px"
                         src={post.image}
@@ -117,7 +117,7 @@ export default async function WritingCategoryPage({
             </div>
           ) : (
             <div className="writing-archive-empty">
-              <p>रचनाहरू अहिले लोड हुन सकेनन्। मूल ब्लगमा पढ्न सक्नुहुन्छ।</p>
+              <p>यस विधाका रचनाहरू छिट्टै यहाँ प्रकाशित हुनेछन्।</p>
             </div>
           )}
         </section>
