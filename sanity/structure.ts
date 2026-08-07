@@ -17,6 +17,15 @@ export const structure: StructureResolver = (S) =>
     .title('Content')
     .items([
       S.listItem()
+        .title('Home Page')
+        .icon(DocumentIcon)
+        .child(
+          S.document()
+            .schemaType('homePage')
+            .documentId('homePage'),
+        ),
+      S.divider(),
+      S.listItem()
         .title('Awards Page')
         .icon(StarFilledIcon)
         .child(

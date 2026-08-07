@@ -1,9 +1,8 @@
 import Image from "next/image";
-import { siteData } from "@/constants/home";
+import type { HomeContent } from "@/sanity/lib/home";
 import { ArrowIcon } from "./ArrowIcon";
 
-export function BookSection() {
-  const { book } = siteData;
+export function BookSection({ book }: { book: HomeContent["book"] }) {
   return (
     <section className="book-section" id="book">
       <div className="section-shell book-grid">

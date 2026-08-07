@@ -1,9 +1,8 @@
 import Image from "next/image";
-import { siteData } from "@/constants/home";
+import type { HomeContent } from "@/sanity/lib/home";
 import { ArrowIcon } from "./ArrowIcon";
 
-export function HeroSection() {
-  const { hero } = siteData;
+export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
   return (
     <section className="hero section-shell" id="about">
       <div className="hero-copy">

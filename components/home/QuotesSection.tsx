@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { siteData } from "@/constants/home";
+import type { HomeContent } from "@/sanity/lib/home";
 
-type QuoteGroup = (typeof siteData.quotes)[number];
+type QuoteGroup = HomeContent["quotes"][number];
 
 function CarouselArrow({ direction }: { direction: "previous" | "next" }) {
   return (
@@ -85,21 +85,26 @@ function QuoteCarousel({ group, index }: { group: QuoteGroup; index: number }) {
   );
 }
 
-export function QuotesSection() {
+export function QuotesSection({
+  heading,
+  groups,
+}: {
+  heading: HomeContent["quotesHeading"];
+  groups: HomeContent["quotes"];
+}) {
   return (
     <section className="quotes-section section-shell" id="quotes">
       <div className="section-heading quotes-heading">
         <div>
-          <p className="eyebrow">Words that linger</p>
-          <h2>On the page <em>& beyond</em></h2>
+          <p className="eyebrow">{heading.eyebrow}</p>
+          <h2>{heading.title} <em>{heading.emphasis}</em></h2>
         </div>
         <p className="quotes-intro">
-          A glimpse from the collection, followed by the words it left with a
-          reader.
+          {heading.description}
         </p>
       </div>
       <div className="quotes-grid">
-        {siteData.quotes.map((group, index) => (
+        {groups.map((group, index) => (
           <QuoteCarousel group={group} index={index} key={group.type} />
         ))}
       </div>

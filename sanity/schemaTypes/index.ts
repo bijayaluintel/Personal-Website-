@@ -11,6 +11,7 @@ import {videosPage} from './videosPage'
 import {workPage} from './workPage'
 import {workPortfolioItem} from './workPortfolioItem'
 import {workService} from './workService'
+import {homePage} from './homePage'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -26,5 +27,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     workPage,
     workService,
     workPortfolioItem,
+    homePage,
   ],
 }

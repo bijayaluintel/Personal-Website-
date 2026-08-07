@@ -1,17 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
-import { siteData } from "@/constants/home";
+import type { HomeContent } from "@/sanity/lib/home";
 import { ArrowIcon } from "./ArrowIcon";
 
-export function WritingsSection() {
+export function WritingsSection({
+  heading,
+  posts,
+}: {
+  heading: HomeContent["featuredHeading"];
+  posts: HomeContent["writings"];
+}) {
   return (
     <section className="writings-section section-shell" id="writings">
       <div className="section-heading">
-        <p className="eyebrow">Featured writing</p>
-        <h2>Featured posts</h2>
+        <p className="eyebrow">{heading.eyebrow}</p>
+        <h2>{heading.title}</h2>
       </div>
       <div className="writings-grid">
-        {siteData.writings.map((post) => {
+        {posts.map((post) => {
           const isVideo = post.contentType === "video";
           const visual = (
             <>

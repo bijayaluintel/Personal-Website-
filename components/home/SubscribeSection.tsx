@@ -1,13 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { siteData } from "@/constants/home";
+import type { HomeContent } from "@/sanity/lib/home";
 import { ArrowIcon } from "./ArrowIcon";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
-export function SubscribeSection() {
-  const { newsletter } = siteData;
+export function SubscribeSection({ newsletter }: { newsletter: HomeContent["newsletter"] }) {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [message, setMessage] = useState("");
 
