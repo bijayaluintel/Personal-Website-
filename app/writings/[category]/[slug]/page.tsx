@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { ArticleShare } from "@/components/writings/ArticleShare";
-import { WritingBody } from "@/components/writings/WritingBody";
+import { PhotoCredit, WritingBody, WritingVideo } from "@/components/writings/WritingBody";
 import {
   getWritingCategory,
 } from "@/constants/writings";
@@ -70,17 +70,25 @@ export default async function WritingPostPage({
             <h1>{post.title}</h1>
           </header>
           {post.image && (
-            <div className="writing-post-hero section-shell">
-              <Image
-                alt={post.imageAlt}
-                fill
-                priority
-                sizes="(max-width: 700px) 100vw, 1100px"
-                src={post.image}
-              />
-            </div>
+            <figure className="writing-post-hero-figure section-shell">
+              <div className="writing-post-hero">
+                <Image
+                  alt={post.imageAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 700px) 100vw, 1100px"
+                  src={post.image}
+                />
+              </div>
+              {post.imageCredit && (
+                <figcaption>
+                  <PhotoCredit credit={post.imageCredit} url={post.imageCreditUrl} />
+                </figcaption>
+              )}
+            </figure>
           )}
           <div className="writing-post-content">
+            {post.video && <WritingVideo video={post.video} />}
             {post.body && <WritingBody value={post.body} />}
           </div>
           <ArticleShare title={post.title} />

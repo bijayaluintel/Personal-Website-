@@ -2,7 +2,69 @@ import Image from 'next/image'
 import {PortableText, type PortableTextComponents} from '@portabletext/react'
 import type {PortableTextBlock} from '@portabletext/types'
 import {urlFor} from '@/sanity/lib/image'
-import type {WritingBodyImage} from '@/sanity/lib/writings'
+import type {WritingBodyImage, WritingBodyVideo} from '@/sanity/lib/writings'
+
+export function PhotoCredit({credit, url}: {credit?: string; url?: string}) {
+  if (!credit) return null
+
+  return (
+    <span className="writing-photo-credit">
+      Photo by:{' '}
+      {url ? (
+        <a href={url} rel="noreferrer" target="_blank">{credit}</a>
+      ) : credit}
+    </span>
+  )
+}
+
+function getYouTubeEmbedUrl(href: string) {
+  try {
+    const url = new URL(href)
+    let id = url.hostname.replace(/^www\./, '') === 'youtu.be'
+      ? url.pathname.split('/')[1]
+      : url.searchParams.get('v')
+
+    if (!id && (url.pathname.startsWith('/shorts/') || url.pathname.startsWith('/embed/'))) {
+      id = url.pathname.split('/')[2]
+    }
+
+    return id ? `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}` : null
+  } catch {
+    return null
+  }
+}
+
+export function WritingVideo({video}: {video: WritingBodyVideo}) {
+  if (video.displayAs === 'link') {
+    return (
+      <p className="writing-content-external-link">
+        <span aria-hidden="true">( </span>
+        {video.caption && <span>{video.caption}: </span>}
+        <a href={video.url} rel="noreferrer" target="_blank">{video.url}</a>
+        <span aria-hidden="true"> )</span>
+      </p>
+    )
+  }
+
+  const embedUrl = getYouTubeEmbedUrl(video.url)
+  if (!embedUrl) return null
+
+  return (
+    <figure className="writing-content-video">
+      <div>
+        <iframe
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          src={embedUrl}
+          title={video.title}
+        />
+      </div>
+      {video.caption && <figcaption>{video.caption}</figcaption>}
+    </figure>
+  )
+}
 
 const components: PortableTextComponents = {
   block: {
@@ -53,10 +115,16 @@ const components: PortableTextComponents = {
             src={urlFor(image).width(1400).quality(85).auto('format').url()}
             width={1400}
           />
-          {image.caption && <figcaption>{image.caption}</figcaption>}
+          {(image.caption || image.credit) && (
+            <figcaption>
+              {image.caption && <span>{image.caption}</span>}
+              <PhotoCredit credit={image.credit} url={image.creditUrl} />
+            </figcaption>
+          )}
         </figure>
       )
     },
+    youtubeVideo: ({value}) => <WritingVideo video={value as WritingBodyVideo} />,
   },
   marks: {
     link: ({children, value}) => {
@@ -74,7 +142,7 @@ const components: PortableTextComponents = {
 export function WritingBody({
   value,
 }: {
-  value: Array<PortableTextBlock | WritingBodyImage>
+  value: Array<PortableTextBlock | WritingBodyImage | WritingBodyVideo>
 }) {
   return <PortableText components={components} value={value} />
 }

@@ -11,8 +11,19 @@ export type WritingBodyImage = {
   asset: SanityImageSource
   alt: string
   caption?: string
+  credit?: string
+  creditUrl?: string
   crop?: SanityImageSource
   hotspot?: SanityImageSource
+}
+
+export type WritingBodyVideo = {
+  _key?: string
+  _type?: 'youtubeVideo'
+  url: string
+  title: string
+  caption?: string
+  displayAs?: 'embed' | 'link'
 }
 
 export type WritingPost = {
@@ -23,7 +34,10 @@ export type WritingPost = {
   excerpt: string
   image?: string
   imageAlt: string
-  body?: Array<PortableTextBlock | WritingBodyImage>
+  imageCredit?: string
+  imageCreditUrl?: string
+  video?: WritingBodyVideo
+  body?: Array<PortableTextBlock | WritingBodyImage | WritingBodyVideo>
 }
 
 type WritingDocument = {
@@ -32,8 +46,9 @@ type WritingDocument = {
   publishedAt: string
   slug: string
   excerpt: string
-  mainImage?: SanityImageSource & {alt?: string}
-  body?: Array<PortableTextBlock | WritingBodyImage>
+  mainImage?: SanityImageSource & {alt?: string; credit?: string; creditUrl?: string}
+  articleVideo?: WritingBodyVideo
+  body?: Array<PortableTextBlock | WritingBodyImage | WritingBodyVideo>
 }
 
 const WRITING_LIST_QUERY = defineQuery(/* groq */ `
@@ -44,7 +59,8 @@ const WRITING_LIST_QUERY = defineQuery(/* groq */ `
       publishedAt,
       "slug": slug.current,
       excerpt,
-      mainImage
+      mainImage,
+      articleVideo
     }
 `)
 
@@ -60,6 +76,7 @@ const WRITING_POST_QUERY = defineQuery(/* groq */ `
     "slug": slug.current,
     excerpt,
     mainImage,
+    articleVideo,
     body[]{
       ...
     }
@@ -84,6 +101,9 @@ function mapWriting(document: WritingDocument): WritingPost {
       ? urlFor(document.mainImage).width(1600).quality(85).auto('format').url()
       : undefined,
     imageAlt: document.mainImage?.alt || '',
+    imageCredit: document.mainImage?.credit,
+    imageCreditUrl: document.mainImage?.creditUrl,
+    video: document.articleVideo?.url ? document.articleVideo : undefined,
     body: document.body,
   }
 }

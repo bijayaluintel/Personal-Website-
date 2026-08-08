@@ -13,6 +13,27 @@ import { getWritingPosts } from "@/sanity/lib/writings";
 
 export const revalidate = 60;
 
+function getYouTubeThumbnail(url?: string) {
+  if (!url) return undefined;
+
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.replace(/^www\./, "");
+    let videoId = hostname === "youtu.be"
+      ? parsedUrl.pathname.split("/").filter(Boolean)[0]
+      : parsedUrl.searchParams.get("v");
+
+    if (!videoId && hostname.endsWith("youtube.com")) {
+      const segments = parsedUrl.pathname.split("/").filter(Boolean);
+      if (["embed", "shorts", "live"].includes(segments[0])) videoId = segments[1];
+    }
+
+    return videoId ? `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg` : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function generateStaticParams() {
   return writingCategories.map(({ slug }) => ({ category: slug }));
 }
@@ -76,24 +97,32 @@ export default async function WritingCategoryPage({
           </div>
           {posts.length > 0 ? (
             <div className="writing-archive-list">
-              {posts.map((post, index) => (
-                <article
+              {posts.map((post, index) => {
+                const youtubeThumbnail = getYouTubeThumbnail(post.video?.url);
+                const cardImage = post.image || youtubeThumbnail;
+
+                return <article
                   className={`writing-archive-card${index === 0 ? " is-featured" : ""}${index > 0 && index % 6 === 0 ? " is-wide" : ""}`}
                   key={post.id}
                 >
                   <span className="writing-archive-index">{String(index + 1).padStart(2, "0")}</span>
                   <Link
                     aria-label={`${post.title} पढ्नुहोस्`}
-                    className={`writing-archive-image${post.image ? "" : " is-placeholder"}`}
+                    className={`writing-archive-image${cardImage ? "" : " is-placeholder"}${youtubeThumbnail && !post.image ? " is-video" : ""}`}
                     href={`/writings/${category.slug}/${post.slug}`}
                   >
-                    {post.image ? (
+                    {cardImage ? (
+                      <>
                       <Image
-                        alt={post.imageAlt}
+                        alt={post.imageAlt || `${post.title} भिडियोको थम्बनेल`}
                         fill
-                        sizes="(max-width: 700px) 100vw, 260px"
-                        src={post.image}
+                        sizes="(max-width: 700px) 100vw, (max-width: 1200px) 66vw, 850px"
+                        src={cardImage}
                       />
+                      {youtubeThumbnail && !post.image && (
+                        <span className="writing-archive-play" aria-hidden="true">▶</span>
+                      )}
+                      </>
                     ) : (
                       <span>{category.label}</span>
                     )}
@@ -112,8 +141,8 @@ export default async function WritingCategoryPage({
                       <span>पढ्नुहोस्</span> <ArrowIcon />
                     </Link>
                   </div>
-                </article>
-              ))}
+                </article>;
+              })}
             </div>
           ) : (
             <div className="writing-archive-empty">
