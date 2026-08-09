@@ -12,9 +12,11 @@ import {workPage} from './workPage'
 import {workPortfolioItem} from './workPortfolioItem'
 import {workService} from './workService'
 import {homePage} from './homePage'
+import {siteSettings} from './siteSettings'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
+    siteSettings,
     awardsPage,
     award,
     mediaFeaturesPage,

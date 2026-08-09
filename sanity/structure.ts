@@ -8,6 +8,7 @@ import {
   PlayIcon,
   ComposeIcon,
   ImagesIcon,
+  CogIcon,
 } from '@sanity/icons'
 import type {StructureResolver} from 'sanity/structure'
 
@@ -16,6 +17,14 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
+      S.listItem()
+        .title('Header & Footer')
+        .icon(CogIcon)
+        .child(
+          S.document()
+            .schemaType('siteSettings')
+            .documentId('siteSettings'),
+        ),
       S.listItem()
         .title('Home Page')
         .icon(DocumentIcon)

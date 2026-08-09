@@ -99,6 +99,20 @@ export const writing = defineType({
       description: 'Paste a YouTube link here to show a video near the beginning of the article.',
       fields: [
         defineField({
+          name: 'alignment',
+          title: 'Alignment',
+          type: 'string',
+          options: {list: [{title: 'Left', value: 'left'}, {title: 'Center', value: 'center'}, {title: 'Right', value: 'right'}], layout: 'radio'},
+          initialValue: 'center',
+        }),
+        defineField({
+          name: 'size',
+          title: 'Size',
+          type: 'string',
+          options: {list: [{title: 'Small', value: 'small'}, {title: 'Medium', value: 'medium'}, {title: 'Large', value: 'large'}], layout: 'radio'},
+          initialValue: 'large',
+        }),
+        defineField({
           name: 'url',
           title: 'YouTube video URL',
           type: 'url',
@@ -139,7 +153,11 @@ export const writing = defineType({
         defineArrayMember({
           type: 'block',
           styles: [
-            {title: 'Normal', value: 'normal'},
+            {title: 'Normal — justified', value: 'normal'},
+            {title: 'Align left', value: 'alignLeft'},
+            {title: 'Align center', value: 'alignCenter'},
+            {title: 'Align right', value: 'alignRight'},
+            {title: 'Writer name — right', value: 'signature'},
             {title: 'Poem / कविता', value: 'poem'},
             {title: 'Heading 2', value: 'h2'},
             {title: 'Heading 3', value: 'h3'},
@@ -149,7 +167,7 @@ export const writing = defineType({
             annotations: [
               defineArrayMember({
                 name: 'link',
-                title: 'Link',
+                title: 'Hyperlink',
                 type: 'object',
                 fields: [
                   defineField({
@@ -157,7 +175,13 @@ export const writing = defineType({
                     title: 'URL',
                     type: 'url',
                     validation: (rule) =>
-                      rule.required().uri({scheme: ['http', 'https', 'mailto']}),
+                      rule.required().uri({scheme: ['http', 'https', 'mailto'], allowRelative: true}),
+                  }),
+                  defineField({
+                    name: 'openInNewTab',
+                    title: 'Open in a new tab',
+                    type: 'boolean',
+                    initialValue: true,
                   }),
                 ],
               }),
@@ -195,6 +219,20 @@ export const writing = defineType({
               description: 'Link to the photographer, publication, or original image source.',
               validation: (rule) => rule.uri({scheme: ['http', 'https']}),
             }),
+            defineField({
+              name: 'alignment',
+              title: 'Alignment',
+              type: 'string',
+              options: {list: [{title: 'Left', value: 'left'}, {title: 'Center', value: 'center'}, {title: 'Right', value: 'right'}], layout: 'radio'},
+              initialValue: 'center',
+            }),
+            defineField({
+              name: 'size',
+              title: 'Image size',
+              type: 'string',
+              options: {list: [{title: 'Small', value: 'small'}, {title: 'Medium', value: 'medium'}, {title: 'Large', value: 'large'}], layout: 'radio'},
+              initialValue: 'large',
+            }),
           ],
         }),
         defineArrayMember({
@@ -214,6 +252,20 @@ export const writing = defineType({
                 layout: 'radio',
               },
               initialValue: 'embed',
+            }),
+            defineField({
+              name: 'alignment',
+              title: 'Alignment',
+              type: 'string',
+              options: {list: [{title: 'Left', value: 'left'}, {title: 'Center', value: 'center'}, {title: 'Right', value: 'right'}], layout: 'radio'},
+              initialValue: 'center',
+            }),
+            defineField({
+              name: 'size',
+              title: 'Video/link size',
+              type: 'string',
+              options: {list: [{title: 'Small', value: 'small'}, {title: 'Medium', value: 'medium'}, {title: 'Large', value: 'large'}], layout: 'radio'},
+              initialValue: 'large',
             }),
             defineField({
               name: 'url',

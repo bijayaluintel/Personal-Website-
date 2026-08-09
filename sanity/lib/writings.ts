@@ -13,6 +13,8 @@ export type WritingBodyImage = {
   caption?: string
   credit?: string
   creditUrl?: string
+  alignment?: 'left' | 'center' | 'right'
+  size?: 'small' | 'medium' | 'large'
   crop?: SanityImageSource
   hotspot?: SanityImageSource
 }
@@ -24,6 +26,8 @@ export type WritingBodyVideo = {
   title: string
   caption?: string
   displayAs?: 'embed' | 'link'
+  alignment?: 'left' | 'center' | 'right'
+  size?: 'small' | 'medium' | 'large'
 }
 
 export type WritingPost = {
