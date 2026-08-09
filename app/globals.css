@@ -1078,17 +1078,13 @@ a, button { -webkit-tap-highlight-color: transparent; }
   padding-inline: 24px;
 }
 .writing-post-content p { margin: 0 0 1.45em; }
-.writing-post-stories .writing-post-content p:not(.writing-author-signature) {
+.writing-post-content .writing-text-justify {
   text-align: justify;
   text-justify: inter-word;
 }
-.writing-post-stories .writing-post-content > p:last-of-type:not(.writing-author-signature) {
-  text-align: right;
-}
-.writing-post-memoirs .writing-post-content p:not(.writing-author-signature) {
-  text-align: justify;
-  text-justify: inter-word;
-}
+.writing-post-content .writing-text-left { text-align: left; }
+.writing-post-content .writing-text-center { text-align: center; }
+.writing-post-content .writing-text-right { text-align: right; }
 .writing-post-content .writing-author-signature {
   font-family: var(--font-sans), sans-serif;
   margin-top: 2.2em;
@@ -1124,7 +1120,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: 100%;
 }
 .writing-content-image { margin: 2.4em 0; }
-.writing-content-image img { height: auto; width: 100%; }
+.writing-content-image img { height: auto; margin: 0; width: 100%; }
 .writing-content-video { margin: 2.4em 0; }
 .writing-content-video > div {
   aspect-ratio: 16 / 9;
@@ -1151,6 +1147,21 @@ a, button { -webkit-tap-highlight-color: transparent; }
   text-decoration: none;
 }
 .writing-post-content .writing-content-external-link a:hover { text-decoration: underline; }
+.writing-post-content .media-size-small { width: 48%; }
+.writing-post-content .media-size-medium { width: 74%; }
+.writing-post-content .media-size-large { width: 100%; }
+.writing-post-content .media-align-left {
+  margin-left: 0;
+  margin-right: auto;
+}
+.writing-post-content .media-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+.writing-post-content .media-align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
 .writing-content-image figcaption {
   color: var(--muted);
   font-family: var(--font-sans), sans-serif;
@@ -2748,6 +2759,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .writing-post-hero-figure { padding-inline: 0; }
   .writing-post-hero { aspect-ratio: 4 / 3; }
   .writing-post-hero-figure > figcaption { padding-inline: 18px; }
+  .writing-post-content .media-size-small { width: 68%; }
+  .writing-post-content .media-size-medium { width: 86%; }
   .article-share {
     align-items: center;
     display: flex;

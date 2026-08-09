@@ -4,6 +4,14 @@ import type {PortableTextBlock} from '@portabletext/types'
 import {urlFor} from '@/sanity/lib/image'
 import type {WritingBodyImage, WritingBodyVideo} from '@/sanity/lib/writings'
 
+function mediaClasses(
+  base: string,
+  alignment: 'left' | 'center' | 'right' = 'center',
+  size: 'small' | 'medium' | 'large' = 'large',
+) {
+  return `${base} media-align-${alignment} media-size-${size}`
+}
+
 export function PhotoCredit({credit, url}: {credit?: string; url?: string}) {
   if (!credit) return null
 
@@ -37,7 +45,7 @@ function getYouTubeEmbedUrl(href: string) {
 export function WritingVideo({video}: {video: WritingBodyVideo}) {
   if (video.displayAs === 'link') {
     return (
-      <p className="writing-content-external-link">
+      <p className={mediaClasses('writing-content-external-link', video.alignment, video.size)}>
         <span aria-hidden="true">( </span>
         {video.caption && <span>{video.caption}: </span>}
         <a href={video.url} rel="noreferrer" target="_blank">{video.url}</a>
@@ -50,7 +58,7 @@ export function WritingVideo({video}: {video: WritingBodyVideo}) {
   if (!embedUrl) return null
 
   return (
-    <figure className="writing-content-video">
+    <figure className={mediaClasses('writing-content-video', video.alignment, video.size)}>
       <div>
         <iframe
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -75,8 +83,12 @@ const components: PortableTextComponents = {
         .trim()
       const isSignature = /^[-–—]\s*\S/.test(text || '')
 
-      return <p className={isSignature ? 'writing-author-signature' : undefined}>{children}</p>
+      return <p className={isSignature ? 'writing-author-signature' : 'writing-text-justify'}>{children}</p>
     },
+    alignLeft: ({children}) => <p className="writing-text-left">{children}</p>,
+    alignCenter: ({children}) => <p className="writing-text-center">{children}</p>,
+    alignRight: ({children}) => <p className="writing-text-right">{children}</p>,
+    signature: ({children}) => <p className="writing-author-signature">{children}</p>,
     poem: ({children, value}) => {
       const text = value.children
         ?.map((child) => ('text' in child ? child.text : ''))
@@ -107,7 +119,7 @@ const components: PortableTextComponents = {
       if (!image.asset) return null
 
       return (
-        <figure className="writing-content-image">
+        <figure className={mediaClasses('writing-content-image', image.alignment, image.size)}>
           <Image
             alt={image.alt}
             height={875}
@@ -130,8 +142,9 @@ const components: PortableTextComponents = {
     link: ({children, value}) => {
       const href = typeof value?.href === 'string' ? value.href : '#'
       const external = href.startsWith('http')
+      const openInNewTab = Boolean(value?.openInNewTab && external)
       return (
-        <a href={href} rel={external ? 'noreferrer' : undefined} target={external ? '_blank' : undefined}>
+        <a href={href} rel={openInNewTab ? 'noreferrer' : undefined} target={openInNewTab ? '_blank' : undefined}>
           {children}
         </a>
       )
