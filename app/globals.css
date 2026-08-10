@@ -2820,6 +2820,16 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: 1180px;
   padding-block: 52px 110px;
 }
+.experience-empty {
+  border-block: 1px solid var(--line);
+  color: var(--muted);
+  padding-block: 42px;
+}
+.experience-empty p {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(18px, 2vw, 24px);
+  margin: 0;
+}
 .timeline-list {
   list-style: none;
   margin: 0;

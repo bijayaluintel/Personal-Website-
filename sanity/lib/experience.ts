@@ -61,8 +61,8 @@ export async function getExperienceContent(): Promise<ExperienceContent> {
 
     return {
       hero: {
-        eyebrow: data.page?.eyebrow || '',
-        title: data.page?.title || '',
+        eyebrow: data.page?.eyebrow || 'Journey so far',
+        title: data.page?.title || 'Experience',
       },
       experiences:
         data.experiences.length > 0
@@ -79,6 +79,9 @@ export async function getExperienceContent(): Promise<ExperienceContent> {
     }
   } catch (error) {
     console.error('Unable to load experience from Sanity:', error)
-    return {hero: {eyebrow: '', title: ''}, experiences: []}
+    return {
+      hero: {eyebrow: 'Journey so far', title: 'Experience'},
+      experiences: [],
+    }
   }
 }
