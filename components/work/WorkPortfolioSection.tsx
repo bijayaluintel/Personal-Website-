@@ -120,7 +120,7 @@ export function WorkPortfolioSection({
   };
 
   return (
-    <div className={`service-work-empty ${emptyCopy.className}`} data-reveal="up">
+    <div className={`service-work-empty ${emptyCopy.className}`}>
       <div>
         <span>{emptyCopy.label}</span>
         <h3>{emptyCopy.title}</h3>
