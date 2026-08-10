@@ -1,7 +1,6 @@
-import { siteData } from "@/constants/home";
-
-export function CollaborationSection({ collaboration }: {
+export function CollaborationSection({ collaboration, email }: {
   collaboration: { eyebrow: string; title: string; description: string };
+  email: string;
 }) {
   return (
     <section className="collaboration-section" id="collaboration">
@@ -13,7 +12,7 @@ export function CollaborationSection({ collaboration }: {
         </div>
 
         <form
-          action={`mailto:${siteData.email}`}
+          action={`mailto:${email}`}
           className="collaboration-form"
           id="contact"
           method="post"

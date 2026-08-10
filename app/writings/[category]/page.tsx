@@ -5,34 +5,11 @@ import { notFound } from "next/navigation";
 import { ArrowIcon } from "@/components/home/ArrowIcon";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
-import {
-  getWritingCategory,
-  writingCategories,
-} from "@/constants/writings";
-import { getWritingPosts } from "@/sanity/lib/writings";
+import { getWritingCategory, getWritingPosts, writingCategories } from "@/sanity/lib/writings";
 
 export const revalidate = 60;
 
-function getYouTubeThumbnail(url?: string) {
-  if (!url) return undefined;
-
-  try {
-    const parsedUrl = new URL(url);
-    const hostname = parsedUrl.hostname.replace(/^www\./, "");
-    let videoId = hostname === "youtu.be"
-      ? parsedUrl.pathname.split("/").filter(Boolean)[0]
-      : parsedUrl.searchParams.get("v");
-
-    if (!videoId && hostname.endsWith("youtube.com")) {
-      const segments = parsedUrl.pathname.split("/").filter(Boolean);
-      if (["embed", "shorts", "live"].includes(segments[0])) videoId = segments[1];
-    }
-
-    return videoId ? `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg` : undefined;
-  } catch {
-    return undefined;
-  }
-}
+import { getYouTubeThumbnail } from "@/sanity/lib/youtube";
 
 export function generateStaticParams() {
   return writingCategories.map(({ slug }) => ({ category: slug }));

@@ -1,13 +1,10 @@
 import type {SanityImageSource} from '@sanity/image-url'
 import {defineQuery} from 'next-sanity'
-import {
-  getVideoCategory,
-  getVideoCategoryNavigation,
-  type VideoCategory,
-  type VideoItem,
-} from '@/constants/videos'
 import {client} from './client'
 import {urlFor} from './image'
+
+export type VideoItem = {number: string; title: string; description: string; source: string; href: string; thumbnail?: string; thumbnailAlt: string}
+export type VideoCategory = {slug: string; label: string; eyebrow: string; description: string; channel?: {href: string; handle: string}; items: VideoItem[]}
 
 type CategorySettings = {
   _key: string
@@ -64,16 +61,17 @@ const VIDEOS_QUERY = defineQuery(/* groq */ `{
     }
 }`)
 
-function mergeCategory(settings: CategorySettings, fallback: VideoCategory): VideoCategory {
+function mapCategory(settings: CategorySettings): VideoCategory {
   return {
-    ...fallback,
-    label: settings.label || fallback.label,
-    eyebrow: settings.eyebrow || fallback.eyebrow,
-    description: settings.description || fallback.description,
+    slug: settings.category,
+    label: settings.label,
+    eyebrow: settings.eyebrow,
+    description: settings.description,
     channel:
       settings.channelUrl && settings.channelHandle
         ? {href: settings.channelUrl, handle: settings.channelHandle}
-        : fallback.channel,
+        : undefined,
+    items: [],
   }
 }
 
@@ -92,9 +90,6 @@ function mapVideo(item: VideoDocument, index: number): VideoItem {
 }
 
 export async function getVideosContent(categorySlug: string): Promise<VideosContent | null> {
-  const fallbackCategory = getVideoCategory(categorySlug)
-  if (!fallbackCategory) return null
-
   try {
     const data = await client.fetch<VideosResult>(
       VIDEOS_QUERY,
@@ -103,23 +98,31 @@ export async function getVideosContent(categorySlug: string): Promise<VideosCont
     )
 
     const categorySettings = data.categories.find((item) => item.category === categorySlug)
-    const category = categorySettings
-      ? mergeCategory(categorySettings, fallbackCategory)
-      : fallbackCategory
-    const navigation = getVideoCategoryNavigation().map((fallback) => {
-      const settings = data.categories.find((item) => item.category === fallback.slug)
-      return settings ? mergeCategory(settings, fallback) : fallback
-    })
+    if (!categorySettings) return null
+    const category = mapCategory(categorySettings)
+    const navigation = data.categories.map(mapCategory)
 
     return {
       category: {
         ...category,
-        items: data.items.length > 0 ? data.items.map(mapVideo) : fallbackCategory.items,
+        items: data.items.map(mapVideo),
       },
       navigation,
     }
   } catch (error) {
     console.error(`Unable to load ${categorySlug} videos from Sanity:`, error)
-    return {category: fallbackCategory, navigation: getVideoCategoryNavigation()}
+    return null
+  }
+}
+
+export async function getVideoCategoryParams() {
+  try {
+    const categories = await client.withConfig({useCdn: false}).fetch<Array<{category: string}>>(
+      defineQuery(`*[_type == "videosPage" && _id == "videosPage"][0].categories[]{category}`),
+    )
+    return categories.map(({category}) => ({category}))
+  } catch (error) {
+    console.error('Unable to load video routes from Sanity:', error)
+    return []
   }
 }

@@ -1,8 +1,18 @@
 import type {SanityImageSource} from '@sanity/image-url'
 import {defineQuery} from 'next-sanity'
-import {awardsPageData, type AwardItem} from '@/constants/awards'
 import {client} from './client'
 import {urlFor} from './image'
+
+export type AwardItem = {
+  id: string
+  number: string
+  year: string
+  title: string
+  organization: string
+  description: string
+  image?: string
+  imageAlt: string
+}
 
 type AwardsPageResult = {
   hero: {
@@ -54,8 +64,8 @@ export async function getAwardsContent(): Promise<AwardsContent> {
 
     return {
       hero: {
-        eyebrow: data.hero?.eyebrow || awardsPageData.hero.eyebrow,
-        title: data.hero?.title || awardsPageData.hero.title,
+        eyebrow: data.hero?.eyebrow || '',
+        title: data.hero?.title || '',
       },
       awards:
         data.awards.length > 0
@@ -71,10 +81,10 @@ export async function getAwardsContent(): Promise<AwardsContent> {
                 : undefined,
               imageAlt: award.imageAlt,
             }))
-          : awardsPageData.awards,
+          : [],
     }
   } catch (error) {
     console.error('Unable to load awards from Sanity:', error)
-    return awardsPageData
+    return {hero: {eyebrow: '', title: ''}, awards: []}
   }
 }

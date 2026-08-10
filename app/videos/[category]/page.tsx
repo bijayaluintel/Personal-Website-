@@ -5,15 +5,11 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { ScrollRevealObserver } from "@/components/ScrollRevealObserver";
-import {
-  getYouTubeThumbnail,
-  videoCategories,
-  type VideoItem,
-} from "@/constants/videos";
-import { getVideosContent } from "@/sanity/lib/videos";
+import { getVideoCategoryParams, getVideosContent, type VideoItem } from "@/sanity/lib/videos";
+import { getYouTubeThumbnail } from "@/sanity/lib/youtube";
 
-export function generateStaticParams() {
-  return videoCategories.map(({ slug }) => ({ category: slug }));
+export async function generateStaticParams() {
+  return getVideoCategoryParams();
 }
 
 export async function generateMetadata({

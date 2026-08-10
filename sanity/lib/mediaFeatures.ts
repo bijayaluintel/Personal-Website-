@@ -1,11 +1,18 @@
 import type {SanityImageSource} from '@sanity/image-url'
 import {defineQuery} from 'next-sanity'
-import {
-  mediaFeaturesPageData,
-  type MediaFeatureItem,
-} from '@/constants/mediaFeatures'
 import {client} from './client'
 import {urlFor} from './image'
+
+export type MediaFeatureItem = {
+  id: string
+  number: string
+  title: string
+  description: string
+  source: string
+  href?: string
+  image?: string
+  imageAlt: string
+}
 
 type MediaFeaturesResult = {
   page: {
@@ -57,9 +64,9 @@ export async function getMediaFeaturesContent(): Promise<MediaFeaturesContent> {
     )
 
     return {
-      eyebrow: data.page?.eyebrow || mediaFeaturesPageData.eyebrow,
-      label: data.page?.title || mediaFeaturesPageData.label,
-      description: data.page?.description || mediaFeaturesPageData.description,
+      eyebrow: data.page?.eyebrow || '',
+      label: data.page?.title || '',
+      description: data.page?.description || '',
       items:
         data.items.length > 0
           ? data.items.map((item, index) => ({
@@ -74,10 +81,10 @@ export async function getMediaFeaturesContent(): Promise<MediaFeaturesContent> {
                 : undefined,
               imageAlt: item.imageAlt,
             }))
-          : mediaFeaturesPageData.items,
+          : [],
     }
   } catch (error) {
     console.error('Unable to load media features from Sanity:', error)
-    return mediaFeaturesPageData
+    return {eyebrow: '', label: '', description: '', items: []}
   }
 }

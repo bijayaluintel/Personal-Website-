@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { AwardItem } from "@/constants/awards";
+import type { AwardItem } from "@/sanity/lib/awards";
 
 function AwardVisual({ award }: { award: AwardItem }) {
   return (

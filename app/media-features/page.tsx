@@ -2,15 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
-import {
-  mediaFeaturesPageData,
-  type MediaFeatureItem,
-} from "@/constants/mediaFeatures";
-import { getMediaFeaturesContent } from "@/sanity/lib/mediaFeatures";
+import { getMediaFeaturesContent, type MediaFeatureItem } from "@/sanity/lib/mediaFeatures";
 
 export const metadata: Metadata = {
   title: "Media Features — Bijaya Luintel",
-  description: mediaFeaturesPageData.description,
+  description: "Selected conversations, profiles, and appearances featuring Bijaya Luintel.",
 };
 
 function FeatureImage({ item }: { item: MediaFeatureItem }) {

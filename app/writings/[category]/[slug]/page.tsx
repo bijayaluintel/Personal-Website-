@@ -8,8 +8,6 @@ import { ArticleShare } from "@/components/writings/ArticleShare";
 import { PhotoCredit, WritingBody, WritingVideo } from "@/components/writings/WritingBody";
 import {
   getWritingCategory,
-} from "@/constants/writings";
-import {
   getWritingPost,
   getWritingStaticParams,
 } from "@/sanity/lib/writings";

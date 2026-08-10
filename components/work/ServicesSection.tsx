@@ -12,12 +12,14 @@ export function ServicesSection({
   services: WorkContent["services"];
 }) {
   const [activeService, setActiveService] = useState(
-    services[0].key,
+    services[0]?.key,
   );
   const browserId = useId();
   const selectedService = services.find(
     (service) => service.key === activeService,
   ) ?? services[0];
+
+  if (!selectedService) return null;
 
   return (
     <section className="work-browser section-shell" aria-label="Work portfolio">

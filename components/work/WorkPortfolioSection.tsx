@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { getYouTubeThumbnail } from "@/constants/videos";
-import type { PortfolioVideo } from "@/constants/workPortfolio";
-import type { WorkContent } from "@/sanity/lib/work";
+import type { PortfolioVideo, WorkContent } from "@/sanity/lib/work";
+import { getYouTubeThumbnail } from "@/sanity/lib/youtube";
 
 function PlayIcon() {
   return (

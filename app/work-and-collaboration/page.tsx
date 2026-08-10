@@ -6,6 +6,7 @@ import { CollaborationSection } from "@/components/work/CollaborationSection";
 import { ServicesSection } from "@/components/work/ServicesSection";
 import { WorkHero } from "@/components/work/WorkHero";
 import { getWorkContent } from "@/sanity/lib/work";
+import { getSiteSettings } from "@/sanity/lib/siteSettings";
 
 export const metadata: Metadata = {
   title: "Work & Collaboration — Bijaya Luintel",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function WorkAndCollaborationPage() {
-  const content = await getWorkContent();
+  const [content, settings] = await Promise.all([getWorkContent(), getSiteSettings()]);
 
   return (
     <>
@@ -25,7 +26,7 @@ export default async function WorkAndCollaborationPage() {
         <ScrollRevealObserver />
         <WorkHero hero={content.hero} />
         <ServicesSection eyebrow={content.servicesEyebrow} services={content.services} />
-        <CollaborationSection collaboration={content.collaboration} />
+        <CollaborationSection collaboration={content.collaboration} email={settings.email} />
       </main>
       <SiteFooter />
     </>

@@ -1,9 +1,15 @@
 import {defineQuery} from 'next-sanity'
-import {
-  experiencePageData,
-  type ExperienceItem,
-} from '@/constants/experience'
 import {client} from './client'
+
+export type ExperienceItem = {
+  id: string
+  period: string
+  title: string
+  organization: string
+  location: string
+  description: string
+  highlights: string[]
+}
 
 type ExperienceResult = {
   page: {
@@ -55,8 +61,8 @@ export async function getExperienceContent(): Promise<ExperienceContent> {
 
     return {
       hero: {
-        eyebrow: data.page?.eyebrow || experiencePageData.hero.eyebrow,
-        title: data.page?.title || experiencePageData.hero.title,
+        eyebrow: data.page?.eyebrow || '',
+        title: data.page?.title || '',
       },
       experiences:
         data.experiences.length > 0
@@ -69,10 +75,10 @@ export async function getExperienceContent(): Promise<ExperienceContent> {
               description: experience.description,
               highlights: experience.highlights,
             }))
-          : experiencePageData.experiences,
+          : [],
     }
   } catch (error) {
     console.error('Unable to load experience from Sanity:', error)
-    return experiencePageData
+    return {hero: {eyebrow: '', title: ''}, experiences: []}
   }
 }
