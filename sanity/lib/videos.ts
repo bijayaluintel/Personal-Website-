@@ -136,7 +136,7 @@ function emptyCategoryContent(categorySlug: string): VideosContent | null {
 
 export async function getVideosContent(categorySlug: string): Promise<VideosContent | null> {
   try {
-    const data = await client.fetch<VideosResult>(
+    const data = await client.withConfig({useCdn: false}).fetch<VideosResult>(
       VIDEOS_QUERY,
       {category: categorySlug},
       {next: {revalidate: 60, tags: ['videos', `videos:${categorySlug}`]}},
