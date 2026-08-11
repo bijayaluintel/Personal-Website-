@@ -36,6 +36,39 @@ export type VideosContent = {
   navigation: VideoCategory[]
 }
 
+export const videoCategories: CategorySettings[] = [
+  {
+    _key: 'poetry-performances',
+    category: 'poetry-performances',
+    label: 'Poetry & Performances',
+    eyebrow: 'Poetry in voice',
+    description: 'Poems carried beyond the page through live readings, stages, and recorded performances.',
+  },
+  {
+    _key: 'podcasts',
+    category: 'podcasts',
+    label: 'Podcasts & Interviews',
+    eyebrow: 'Listen & watch',
+    description: 'Long-form conversations about writing, creativity, literature, and the everyday.',
+  },
+  {
+    _key: 'documentaries',
+    category: 'documentaries',
+    label: 'Documentaries',
+    eyebrow: 'Stories in depth',
+    description: 'Documentary films exploring people, places, ideas, and stories with depth and attention.',
+  },
+  {
+    _key: 'youtube-channel',
+    category: 'youtube-channel',
+    label: 'YouTube Channel',
+    eyebrow: 'Latest from the channel',
+    description: 'Original poems, spoken-word performances, conversations, and stories from Bijaya Luintel.',
+    channelUrl: 'https://www.youtube.com/@bijayaluintel',
+    channelHandle: '@bijayaluintel',
+  },
+]
+
 const VIDEOS_QUERY = defineQuery(/* groq */ `{
   "categories": coalesce(
     *[_type == "videosPage" && _id == "videosPage"][0].categories[]{
@@ -89,6 +122,18 @@ function mapVideo(item: VideoDocument, index: number): VideoItem {
   }
 }
 
+function mergeCategorySettings(settings: CategorySettings[]) {
+  return videoCategories.map(
+    (fallback) => settings.find((item) => item.category === fallback.category) || fallback,
+  )
+}
+
+function emptyCategoryContent(categorySlug: string): VideosContent | null {
+  const navigation = videoCategories.map(mapCategory)
+  const category = navigation.find((item) => item.slug === categorySlug)
+  return category ? {category, navigation} : null
+}
+
 export async function getVideosContent(categorySlug: string): Promise<VideosContent | null> {
   try {
     const data = await client.fetch<VideosResult>(
@@ -97,10 +142,11 @@ export async function getVideosContent(categorySlug: string): Promise<VideosCont
       {next: {revalidate: 60, tags: ['videos', `videos:${categorySlug}`]}},
     )
 
-    const categorySettings = data.categories.find((item) => item.category === categorySlug)
+    const settings = mergeCategorySettings(data.categories)
+    const categorySettings = settings.find((item) => item.category === categorySlug)
     if (!categorySettings) return null
     const category = mapCategory(categorySettings)
-    const navigation = data.categories.map(mapCategory)
+    const navigation = settings.map(mapCategory)
 
     return {
       category: {
@@ -111,18 +157,10 @@ export async function getVideosContent(categorySlug: string): Promise<VideosCont
     }
   } catch (error) {
     console.error(`Unable to load ${categorySlug} videos from Sanity:`, error)
-    return null
+    return emptyCategoryContent(categorySlug)
   }
 }
 
 export async function getVideoCategoryParams() {
-  try {
-    const categories = await client.withConfig({useCdn: false}).fetch<Array<{category: string}>>(
-      defineQuery(`*[_type == "videosPage" && _id == "videosPage"][0].categories[]{category}`),
-    )
-    return categories.map(({category}) => ({category}))
-  } catch (error) {
-    console.error('Unable to load video routes from Sanity:', error)
-    return []
-  }
+  return videoCategories.map(({category}) => ({category}))
 }
