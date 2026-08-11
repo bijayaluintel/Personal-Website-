@@ -2,6 +2,7 @@ import type {SanityImageSource} from '@sanity/image-url'
 import {defineQuery} from 'next-sanity'
 import {client} from './client'
 import {urlFor} from './image'
+import {getLinkPreview} from './linkPreview'
 
 export type MediaFeatureItem = {
   id: string
@@ -11,6 +12,7 @@ export type MediaFeatureItem = {
   source: string
   href?: string
   image?: string
+  mediaType?: 'image' | 'video'
   imageAlt: string
 }
 
@@ -67,21 +69,26 @@ export async function getMediaFeaturesContent(): Promise<MediaFeaturesContent> {
       eyebrow: data.page?.eyebrow || '',
       label: data.page?.title || '',
       description: data.page?.description || '',
-      items:
-        data.items.length > 0
-          ? data.items.map((item, index) => ({
-              id: item._id,
-              number: String(index + 1).padStart(2, '0'),
-              title: item.title,
-              source: item.source,
-              description: item.description,
-              href: item.url,
-              image: item.image
-                ? urlFor(item.image).width(1600).quality(85).auto('format').url()
-                : undefined,
-              imageAlt: item.imageAlt,
-            }))
-          : [],
+      items: await Promise.all(
+        data.items.map(async (item, index) => {
+          const automaticPreview = await getLinkPreview(item.url)
+          const legacyImage = item.image
+            ? urlFor(item.image).width(1600).quality(85).auto('format').url()
+            : undefined
+
+          return {
+            id: item._id,
+            number: String(index + 1).padStart(2, '0'),
+            title: item.title,
+            source: item.source,
+            description: item.description,
+            href: item.url,
+            image: automaticPreview?.url || legacyImage,
+            mediaType: automaticPreview?.type || (legacyImage ? 'image' : undefined),
+            imageAlt: item.imageAlt || `${item.title} preview`,
+          }
+        }),
+      ),
     }
   } catch (error) {
     console.error('Unable to load media features from Sanity:', error)

@@ -34,17 +34,17 @@ export const mediaFeature = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Feature image',
+      title: 'Legacy feature image',
       type: 'image',
       options: {hotspot: true},
-      validation: (rule) => rule.required(),
+      description: 'Kept for existing entries. New thumbnails are generated from the published feature URL.',
+      hidden: true,
     }),
     defineField({
       name: 'imageAlt',
-      title: 'Image description',
+      title: 'Legacy image description',
       type: 'string',
-      description: 'Describe the image for visitors using screen readers.',
-      validation: (rule) => rule.required(),
+      hidden: true,
     }),
     defineField({
       name: 'displayOrder',
@@ -66,10 +66,9 @@ export const mediaFeature = defineType({
     select: {
       title: 'title',
       source: 'source',
-      media: 'image',
     },
-    prepare({title, source, media}) {
-      return {title, subtitle: source, media}
+    prepare({title, source}) {
+      return {title, subtitle: source}
     },
   },
 })

@@ -1871,12 +1871,17 @@ a, button { -webkit-tap-highlight-color: transparent; }
   position: relative;
 }
 .media-feature-card.is-featured .media-feature-image { aspect-ratio: 16 / 7.4; }
-.media-feature-image img {
+.media-feature-image img,
+.media-feature-image video {
+  display: block;
+  height: 100%;
   object-fit: contain;
   padding: 8px;
   transition: opacity 180ms ease;
+  width: 100%;
 }
-.media-feature-card:hover .media-feature-image img { opacity: 0.92; }
+.media-feature-card:hover .media-feature-image img,
+.media-feature-card:hover .media-feature-image video { opacity: 0.92; }
 .media-feature-image.is-placeholder {
   align-items: center;
   background:

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { getMediaFeaturesContent, type MediaFeatureItem } from "@/sanity/lib/mediaFeatures";
@@ -13,12 +12,13 @@ function FeatureImage({ item }: { item: MediaFeatureItem }) {
   return (
     <div className={`media-feature-image${item.image ? "" : " is-placeholder"}`}>
       {item.image ? (
-        <Image
-          alt={item.imageAlt}
-          fill
-          sizes="(max-width: 700px) 92vw, 640px"
-          src={item.image}
-        />
+        item.mediaType === "video" ? (
+          <video aria-label={item.imageAlt} muted playsInline preload="metadata" src={item.image} />
+        ) : (
+          // Preview hosts are discovered from the published URL and cannot be enumerated in next.config.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img alt={item.imageAlt} loading="lazy" src={item.image} />
+        )
       ) : (
         <>
           <span className="media-feature-placeholder-mark">BL</span>
