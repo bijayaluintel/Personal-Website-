@@ -22,7 +22,7 @@ type VideoDocument = {
   description: string
   source: string
   url: string
-  thumbnail?: SanityImageSource & {alt?: string}
+  thumbnail?: SanityImageSource & {asset?: unknown; alt?: string}
   thumbnailAlt: string
 }
 
@@ -89,7 +89,7 @@ const VIDEOS_QUERY = defineQuery(/* groq */ `{
       description,
       source,
       url,
-      thumbnail,
+      "thumbnail": select(defined(thumbnail.asset) => thumbnail),
       thumbnailAlt
     }
 }`)
@@ -109,16 +109,18 @@ function mapCategory(settings: CategorySettings): VideoCategory {
 }
 
 function mapVideo(item: VideoDocument, index: number): VideoItem {
+  const customThumbnail = item.thumbnail?.asset ? item.thumbnail : undefined
+
   return {
     number: String(index + 1).padStart(2, '0'),
     title: item.title,
     description: item.description,
     source: item.source,
     href: item.url,
-    thumbnail: item.thumbnail
-      ? urlFor(item.thumbnail).width(1280).height(720).fit('crop').quality(85).auto('format').url()
+    thumbnail: customThumbnail
+      ? urlFor(customThumbnail).width(1280).height(720).fit('crop').quality(85).auto('format').url()
       : undefined,
-    thumbnailAlt: item.thumbnail?.alt || item.thumbnailAlt,
+    thumbnailAlt: customThumbnail?.alt || item.thumbnailAlt || `${item.title} video thumbnail`,
   }
 }
 
