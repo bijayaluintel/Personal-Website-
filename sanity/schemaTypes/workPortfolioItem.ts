@@ -1,6 +1,5 @@
 import {ImagesIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
-import {workServiceOptions} from './workService'
 
 export const workPortfolioItem = defineType({
   name: 'workPortfolioItem',
@@ -8,7 +7,17 @@ export const workPortfolioItem = defineType({
   type: 'document',
   icon: ImagesIcon,
   fields: [
-    defineField({name: 'serviceKey', title: 'Service', type: 'string', options: {list: workServiceOptions}, validation: (rule) => rule.required()}),
+    defineField({
+      name: 'serviceKey',
+      title: 'Service type / URL key',
+      type: 'string',
+      description: 'Enter the exact URL key used by the related Work Service, for example: lyrics-writing.',
+      validation: (rule) =>
+        rule.required().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+          name: 'URL key',
+          invert: false,
+        }),
+    }),
     defineField({name: 'mediaType', title: 'Media type', type: 'string', options: {list: [{title: 'Video', value: 'video'}, {title: 'Image', value: 'image'}], layout: 'radio'}, initialValue: 'video', validation: (rule) => rule.required()}),
     defineField({name: 'title', title: 'Project title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'source', title: 'Series, client, or source', type: 'string', validation: (rule) => rule.required()}),

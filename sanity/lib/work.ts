@@ -3,11 +3,7 @@ import {defineQuery} from 'next-sanity'
 import {client} from './client'
 import {urlFor} from './image'
 
-export const serviceKeys = ['scriptwriting', 'copywriting', 'songwriting', 'translations', 'brand-collaborations'] as const
-export type ServiceKey = (typeof serviceKeys)[number]
-export function isServiceKey(value: string): value is ServiceKey {
-  return serviceKeys.some((key) => key === value)
-}
+export type ServiceKey = string
 export type PortfolioVideo = {mediaType?: 'video' | 'image'; number: string; title: string; description: string; source: string; href?: string; thumbnail?: string; thumbnailAlt: string}
 type WorkPageResult = {
   page: {heroEyebrow?: string; heroTitle?: string; servicesEyebrow?: string; collaborationEyebrow?: string; collaborationTitle?: string; collaborationDescription?: string} | null
@@ -33,7 +29,7 @@ export async function getWorkContent(): Promise<WorkContent> {
         id: service._id,
         key: service.serviceKey,
         number: String(index + 1).padStart(2, '0'),
-        title: service.title,
+        title: service.serviceKey === 'songwriting' ? 'Lyrics writing' : service.title,
         description: service.description,
         details: service.details,
         portfolio: {
@@ -52,5 +48,17 @@ export async function getWorkContent(): Promise<WorkContent> {
   } catch (error) {
     console.error('Unable to load Work & Collaboration from Sanity:', error)
     return {hero: {eyebrow: '', title: ''}, servicesEyebrow: '', services: [], collaboration: {eyebrow: '', title: '', description: ''}}
+  }
+}
+
+export async function getWorkServiceParams() {
+  try {
+    const services = await client.withConfig({useCdn: false}).fetch<Array<{serviceKey: string}>>(
+      defineQuery(`*[_type == "workService" && defined(serviceKey)]{serviceKey}`),
+    )
+    return services.map(({serviceKey}) => ({service: serviceKey}))
+  } catch (error) {
+    console.error('Unable to load Work & Collaboration routes from Sanity:', error)
+    return []
   }
 }

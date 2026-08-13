@@ -2,13 +2,14 @@ import { ScrollRevealObserver } from "@/components/ScrollRevealObserver";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { getSiteSettings } from "@/sanity/lib/siteSettings";
-import { getWorkContent, type ServiceKey } from "@/sanity/lib/work";
+import { getWorkContent } from "@/sanity/lib/work";
 import { CollaborationSection } from "./CollaborationSection";
 import { ServicesSection } from "./ServicesSection";
 import { WorkHero } from "./WorkHero";
 
-export async function WorkPage({ activeService }: { activeService: ServiceKey }) {
+export async function WorkPage({ activeService }: { activeService: string }) {
   const [content, settings] = await Promise.all([getWorkContent(), getSiteSettings()]);
+  if (!content.services.some((service) => service.key === activeService)) notFound();
 
   return (
     <>
@@ -23,3 +24,4 @@ export async function WorkPage({ activeService }: { activeService: ServiceKey })
     </>
   );
 }
+import { notFound } from "next/navigation";

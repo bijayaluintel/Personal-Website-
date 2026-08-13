@@ -1,21 +1,23 @@
 import {ComposeIcon} from '@sanity/icons'
 import {defineArrayMember, defineField, defineType} from 'sanity'
 
-const services = [
-  {title: 'Scriptwriting', value: 'scriptwriting'},
-  {title: 'Copywriting', value: 'copywriting'},
-  {title: 'Songwriting', value: 'songwriting'},
-  {title: 'Translations', value: 'translations'},
-  {title: 'Brand collaborations', value: 'brand-collaborations'},
-]
-
 export const workService = defineType({
   name: 'workService',
   title: 'Work Service',
   type: 'document',
   icon: ComposeIcon,
   fields: [
-    defineField({name: 'serviceKey', title: 'Service type', type: 'string', options: {list: services}, validation: (rule) => rule.required()}),
+    defineField({
+      name: 'serviceKey',
+      title: 'Service type / URL key',
+      type: 'string',
+      description: 'Use lowercase words separated by hyphens, for example: editing or event-hosting. This creates the section URL.',
+      validation: (rule) =>
+        rule.required().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+          name: 'URL key',
+          invert: false,
+        }),
+    }),
     defineField({name: 'title', title: 'Navigation title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'description', title: 'Service description', type: 'text', rows: 3, validation: (rule) => rule.required().max(300)}),
     defineField({name: 'details', title: 'Areas of work', type: 'array', of: [defineArrayMember({type: 'string'})], validation: (rule) => rule.required().min(1).max(6).unique()}),
@@ -27,5 +29,3 @@ export const workService = defineType({
   orderings: [{title: 'Display order', name: 'displayOrderAsc', by: [{field: 'displayOrder', direction: 'asc'}]}],
   preview: {select: {title: 'title', subtitle: 'serviceKey'}},
 })
-
-export {services as workServiceOptions}
