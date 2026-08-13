@@ -45,8 +45,16 @@ export default async function ExperiencePage() {
                       <span>{experience.location}</span>
                     </div>
                     <h2>{experience.title}</h2>
-                    <p>{experience.description}</p>
-                    <ul aria-label="Areas of work">
+                    <ul className="timeline-summary" aria-label="Role summary">
+                      {experience.description
+                        .split(/\r?\n+/)
+                        .map((paragraph) => paragraph.trim())
+                        .filter(Boolean)
+                        .map((paragraph, paragraphIndex) => (
+                          <li key={`${paragraphIndex}-${paragraph}`}>{paragraph}</li>
+                        ))}
+                    </ul>
+                    <ul className="timeline-highlights" aria-label="Areas of work">
                       {experience.highlights.map((highlight) => (
                         <li key={highlight}>{highlight}</li>
                       ))}

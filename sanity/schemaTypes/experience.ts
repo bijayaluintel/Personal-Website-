@@ -38,6 +38,7 @@ export const experience = defineType({
       title: 'Role summary',
       type: 'text',
       rows: 4,
+      description: 'Each new paragraph or line is displayed as a separate bullet point.',
       validation: (rule) => rule.required().max(700),
     }),
     defineField({
