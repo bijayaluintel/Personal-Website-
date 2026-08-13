@@ -1,20 +1,16 @@
-"use client";
-
-import { useId, useState } from "react";
+import Link from "next/link";
 import type { WorkContent } from "@/sanity/lib/work";
 import { WorkPortfolioSection } from "./WorkPortfolioSection";
 
 export function ServicesSection({
   eyebrow,
   services,
+  activeService,
 }: {
   eyebrow: string;
   services: WorkContent["services"];
+  activeService: WorkContent["services"][number]["key"];
 }) {
-  const [activeService, setActiveService] = useState(
-    services[0]?.key,
-  );
-  const browserId = useId();
   const selectedService = services.find(
     (service) => service.key === activeService,
   ) ?? services[0];
@@ -31,33 +27,28 @@ export function ServicesSection({
         <div aria-label="Work categories" className="work-browser-nav" data-reveal="left" role="tablist">
           {services.map((service) => {
             const isActive = service.key === activeService;
-            const tabId = `${browserId}-${service.number}-tab`;
 
             return (
-              <button
-                aria-controls={`${browserId}-panel`}
+              <Link
+                aria-current={isActive ? "page" : undefined}
                 aria-selected={isActive}
                 className="work-browser-tab"
-                id={tabId}
+                href={`/work-and-collaboration/${service.key}`}
                 key={service.key}
-                onClick={() => setActiveService(service.key)}
                 role="tab"
-                type="button"
               >
                 <span>{service.number}</span>
                 <strong>{service.title}</strong>
                 <small>{service.details.join(" · ")}</small>
                 <i aria-hidden="true">→</i>
-              </button>
+              </Link>
             );
           })}
         </div>
 
         <div
-          aria-labelledby={`${browserId}-${selectedService.number}-tab`}
+          aria-label={`${selectedService.title} portfolio`}
           className="work-browser-panel"
-          data-reveal="right"
-          id={`${browserId}-panel`}
           role="tabpanel"
         >
           <div className="work-browser-panel-intro">

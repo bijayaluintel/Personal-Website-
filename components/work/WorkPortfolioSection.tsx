@@ -47,7 +47,6 @@ function PortfolioCard({
   return (
     <article
       className={`portfolio-video-card${featured ? " is-featured" : ""}`}
-      data-reveal="up"
     >
       {video.href ? (
         <a aria-label={`${video.title} हेर्नुहोस्`} href={video.href} rel="noreferrer" target="_blank">
@@ -76,7 +75,7 @@ export function WorkPortfolioSection({
   if (service.key === "scriptwriting") {
     return (
       <div className="service-work-expanded work-portfolio is-scriptwriting">
-        <div className="portfolio-group-heading" data-reveal="up">
+        <div className="portfolio-group-heading">
           <div>
             <p>{service.portfolio.eyebrow}</p>
             <h3>{service.portfolio.title}</h3>
@@ -97,7 +96,7 @@ export function WorkPortfolioSection({
 
     return (
       <div className={`service-work-expanded work-portfolio ${variant}`}>
-        <div className="portfolio-group-heading" data-reveal="up">
+        <div className="portfolio-group-heading">
           <div>
             <p>{service.portfolio.eyebrow}</p>
             <h3>{service.portfolio.title}</h3>
@@ -106,6 +105,24 @@ export function WorkPortfolioSection({
         <div className="portfolio-secondary-videos">
           {service.portfolio.items.map((video) => (
             <PortfolioCard key={video.number} video={video} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (service.portfolio.items.length > 0) {
+    return (
+      <div className={`service-work-expanded work-portfolio is-${service.key}`}>
+        <div className="portfolio-group-heading">
+          <div>
+            <p>{service.portfolio.eyebrow}</p>
+            <h3>{service.portfolio.title}</h3>
+          </div>
+        </div>
+        <div className="portfolio-secondary-videos">
+          {service.portfolio.items.map((item) => (
+            <PortfolioCard key={item.number} video={item} />
           ))}
         </div>
       </div>

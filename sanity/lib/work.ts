@@ -3,12 +3,16 @@ import {defineQuery} from 'next-sanity'
 import {client} from './client'
 import {urlFor} from './image'
 
-type ServiceKey = 'scriptwriting' | 'copywriting' | 'songwriting' | 'translations' | 'brand-collaborations'
+export const serviceKeys = ['scriptwriting', 'copywriting', 'songwriting', 'translations', 'brand-collaborations'] as const
+export type ServiceKey = (typeof serviceKeys)[number]
+export function isServiceKey(value: string): value is ServiceKey {
+  return serviceKeys.some((key) => key === value)
+}
 export type PortfolioVideo = {mediaType?: 'video' | 'image'; number: string; title: string; description: string; source: string; href?: string; thumbnail?: string; thumbnailAlt: string}
 type WorkPageResult = {
   page: {heroEyebrow?: string; heroTitle?: string; servicesEyebrow?: string; collaborationEyebrow?: string; collaborationTitle?: string; collaborationDescription?: string} | null
   services: Array<{_id: string; serviceKey: ServiceKey; title: string; description: string; details: string[]; portfolioEyebrow: string; portfolioTitle: string; emptyNote?: string}>
-  items: Array<{_id: string; serviceKey: ServiceKey; mediaType: 'video' | 'image'; title: string; source: string; description?: string; url?: string; image?: SanityImageSource & {alt?: string}; thumbnailAlt: string}>
+  items: Array<{_id: string; serviceKey: ServiceKey; mediaType: 'video' | 'image'; title: string; source: string; description?: string; url?: string; image?: SanityImageSource & {asset?: unknown; alt?: string}; thumbnailAlt: string}>
 }
 export type WorkServiceContent = {id: string; key: ServiceKey; number: string; title: string; description: string; details: string[]; portfolio: {eyebrow: string; title: string; emptyNote: string; items: PortfolioVideo[]}}
 export type WorkContent = {hero: {eyebrow: string; title: string}; servicesEyebrow: string; services: WorkServiceContent[]; collaboration: {eyebrow: string; title: string; description: string}}
@@ -21,7 +25,7 @@ const WORK_QUERY = defineQuery(/* groq */ `{
 
 export async function getWorkContent(): Promise<WorkContent> {
   try {
-    const data = await client.fetch<WorkPageResult>(WORK_QUERY, {}, {next: {revalidate: 60, tags: ['work']}})
+    const data = await client.withConfig({useCdn: false}).fetch<WorkPageResult>(WORK_QUERY, {}, {next: {revalidate: 60, tags: ['work']}})
     return {
       hero: {eyebrow: data.page?.heroEyebrow || '', title: data.page?.heroTitle || ''},
       servicesEyebrow: data.page?.servicesEyebrow || '',
@@ -38,7 +42,7 @@ export async function getWorkContent(): Promise<WorkContent> {
           emptyNote: service.emptyNote || '',
           items: data.items.filter((item) => item.serviceKey === service.serviceKey).map((item, itemIndex) => ({
             number: String(itemIndex + 1).padStart(2, '0'), mediaType: item.mediaType, title: item.title, description: item.description || '', source: item.source, href: item.url,
-            thumbnail: item.image ? urlFor(item.image).width(1400).quality(85).auto('format').url() : undefined,
+            thumbnail: item.image?.asset ? urlFor(item.image).width(1400).quality(85).auto('format').url() : undefined,
             thumbnailAlt: item.image?.alt || item.thumbnailAlt,
           })),
         },
