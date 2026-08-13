@@ -41,7 +41,7 @@ export const siteSettings = defineType({
         {_key: 'documentaries', label: 'Documentaries', url: '/videos/documentaries'},
         {_key: 'youtube', label: 'YouTube Channel', url: '/videos/youtube-channel'},
       ]},
-      {_key: 'work', label: 'Work & collaboration', url: '/work-and-collaboration'},
+      {_key: 'work', label: 'Work & collaboration', url: '/work-and-collaboration/scriptwriting'},
       {_key: 'media', label: 'Media features', url: '/media-features'},
       {_key: 'experience', label: 'Experience', url: '/experience'},
       {_key: 'awards', label: 'Awards', url: '/awards'},

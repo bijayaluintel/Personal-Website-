@@ -39,7 +39,7 @@ export function AwardsArchive({ awards }: { awards: AwardItem[] }) {
                 <span>{award.organization}</span>
               </div>
               <h3>{award.title}</h3>
-              <p>{award.description}</p>
+              <p style={{ textAlign: award.descriptionAlignment }}>{award.description}</p>
               <div className="award-caption">
                 <span />
                 <small>Recognition no. {award.number}</small>

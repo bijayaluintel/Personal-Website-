@@ -10,6 +10,7 @@ export type AwardItem = {
   title: string
   organization: string
   description: string
+  descriptionAlignment: 'left' | 'center' | 'right' | 'justify'
   image?: string
   imageAlt: string
 }
@@ -25,6 +26,7 @@ type AwardsPageResult = {
     year: string
     organization: string
     description: string
+    descriptionAlignment?: 'left' | 'center' | 'right' | 'justify'
     image?: SanityImageSource
     imageAlt: string
   }>
@@ -49,6 +51,7 @@ const AWARDS_PAGE_QUERY = defineQuery(`{
     year,
     organization,
     description,
+    descriptionAlignment,
     image,
     imageAlt
   }
@@ -76,6 +79,7 @@ export async function getAwardsContent(): Promise<AwardsContent> {
               title: award.title,
               organization: award.organization,
               description: award.description,
+              descriptionAlignment: award.descriptionAlignment || 'left',
               image: award.image
                 ? urlFor(award.image).width(1400).quality(85).auto('format').url()
                 : undefined,
