@@ -3108,6 +3108,50 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: 570px;
   text-align: right;
 }
+.brand-subsection-nav {
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 0 28px;
+}
+.brand-subsection-nav a {
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  padding: 17px 8px 15px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.brand-subsection-nav a:hover { color: var(--ink); }
+.brand-subsection-nav a[aria-current="page"] {
+  border-bottom-color: var(--rust);
+  color: var(--ink);
+}
+.brand-logo-grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 28px;
+}
+.brand-logo-item {
+  aspect-ratio: 4 / 3;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.brand-logo-item img {
+  object-fit: contain;
+  padding: 24px;
+}
+.brand-logo-empty {
+  color: var(--muted);
+  font-family: var(--font-serif), serif;
+  font-size: 18px;
+  min-height: 260px;
+  padding: 48px 28px;
+}
 .work-browser-panel .service-work-expanded.work-portfolio {
   background: transparent;
   border: 0;
@@ -3217,6 +3261,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   }
   .work-browser-tab[aria-selected="true"] { padding-inline: 14px; }
   .work-browser-panel { margin-top: 10px; }
+  .brand-logo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 700px) {
@@ -3238,6 +3283,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
     margin-top: 8px;
     text-align: left;
   }
+  .brand-subsection-nav { padding-inline: 14px; }
+  .brand-subsection-nav a {
+    font-size: 9px;
+    line-height: 1.4;
+    padding-inline: 5px;
+  }
+  .brand-logo-grid {
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 14px;
+  }
+  .brand-logo-item img { padding: 16px; }
   .work-browser-panel .service-work-expanded.work-portfolio {
     margin: 0;
     padding: 25px 14px 18px;

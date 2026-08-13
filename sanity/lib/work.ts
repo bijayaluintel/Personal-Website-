@@ -5,18 +5,21 @@ import {urlFor} from './image'
 
 export type ServiceKey = string
 export type PortfolioVideo = {mediaType?: 'video' | 'image'; number: string; title: string; description: string; source: string; href?: string; thumbnail?: string; thumbnailAlt: string}
+export type BrandLogo = {id: string; brandName: string; image: string; imageAlt: string}
 type WorkPageResult = {
   page: {heroEyebrow?: string; heroTitle?: string; servicesEyebrow?: string; collaborationEyebrow?: string; collaborationTitle?: string; collaborationDescription?: string} | null
   services: Array<{_id: string; serviceKey: ServiceKey; title: string; description: string; details: string[]; portfolioEyebrow: string; portfolioTitle: string; emptyNote?: string}>
   items: Array<{_id: string; serviceKey: ServiceKey; mediaType: 'video' | 'image'; title: string; source: string; description?: string; url?: string; image?: SanityImageSource & {asset?: unknown; alt?: string}; thumbnailAlt: string}>
+  brandLogos: Array<{_id: string; brandName: string; logo: SanityImageSource & {asset?: unknown; alt?: string}}>
 }
 export type WorkServiceContent = {id: string; key: ServiceKey; number: string; title: string; description: string; details: string[]; portfolio: {eyebrow: string; title: string; emptyNote: string; items: PortfolioVideo[]}}
-export type WorkContent = {hero: {eyebrow: string; title: string}; servicesEyebrow: string; services: WorkServiceContent[]; collaboration: {eyebrow: string; title: string; description: string}}
+export type WorkContent = {hero: {eyebrow: string; title: string}; servicesEyebrow: string; services: WorkServiceContent[]; brandLogos: BrandLogo[]; collaboration: {eyebrow: string; title: string; description: string}}
 
 const WORK_QUERY = defineQuery(/* groq */ `{
   "page": *[_type == "workPage" && _id == "workPage"][0]{heroEyebrow, heroTitle, servicesEyebrow, collaborationEyebrow, collaborationTitle, collaborationDescription},
   "services": *[_type == "workService"] | order(displayOrder asc, _createdAt asc){_id, serviceKey, title, description, details, portfolioEyebrow, portfolioTitle, emptyNote},
-  "items": *[_type == "workPortfolioItem"] | order(displayOrder asc, _createdAt asc){_id, serviceKey, mediaType, title, source, description, url, image, thumbnailAlt}
+  "items": *[_type == "workPortfolioItem"] | order(displayOrder asc, _createdAt asc){_id, serviceKey, mediaType, title, source, description, url, image, thumbnailAlt},
+  "brandLogos": *[_type == "brandLogo" && defined(logo.asset)] | order(displayOrder asc, _createdAt asc){_id, brandName, logo}
 }`)
 
 export async function getWorkContent(): Promise<WorkContent> {
@@ -43,11 +46,17 @@ export async function getWorkContent(): Promise<WorkContent> {
           })),
         },
       })),
+      brandLogos: data.brandLogos.map((brand) => ({
+        id: brand._id,
+        brandName: brand.brandName,
+        image: urlFor(brand.logo).width(800).height(500).fit('max').quality(90).auto('format').url(),
+        imageAlt: brand.logo.alt || `${brand.brandName} logo`,
+      })),
       collaboration: {eyebrow: data.page?.collaborationEyebrow || '', title: data.page?.collaborationTitle || '', description: data.page?.collaborationDescription || ''},
     }
   } catch (error) {
     console.error('Unable to load Work & Collaboration from Sanity:', error)
-    return {hero: {eyebrow: '', title: ''}, servicesEyebrow: '', services: [], collaboration: {eyebrow: '', title: '', description: ''}}
+    return {hero: {eyebrow: '', title: ''}, servicesEyebrow: '', services: [], brandLogos: [], collaboration: {eyebrow: '', title: '', description: ''}}
   }
 }
 

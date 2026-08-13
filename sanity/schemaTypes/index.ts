@@ -1,5 +1,6 @@
 import { type SchemaTypeDefinition } from 'sanity'
 import {award} from './award'
+import {brandLogo} from './brandLogo'
 import {awardsPage} from './awardsPage'
 import {mediaFeature} from './mediaFeature'
 import {mediaFeaturesPage} from './mediaFeaturesPage'
@@ -29,6 +30,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     workPage,
     workService,
     workPortfolioItem,
+    brandLogo,
     homePage,
   ],
 }

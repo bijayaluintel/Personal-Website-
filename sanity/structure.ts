@@ -98,4 +98,7 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('workPortfolioItem')
         .title('Work Portfolio')
         .icon(ImagesIcon),
+      S.documentTypeListItem('brandLogo')
+        .title('Brand Logos')
+        .icon(ImagesIcon),
     ])

@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { ScrollRevealObserver } from "@/components/ScrollRevealObserver";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SiteHeader } from "@/components/home/SiteHeader";
@@ -7,7 +8,7 @@ import { CollaborationSection } from "./CollaborationSection";
 import { ServicesSection } from "./ServicesSection";
 import { WorkHero } from "./WorkHero";
 
-export async function WorkPage({ activeService }: { activeService: string }) {
+export async function WorkPage({ activeService, brandSubsection = "collaboration-showcase" }: { activeService: string; brandSubsection?: "collaboration-showcase" | "brands-worked-with" }) {
   const [content, settings] = await Promise.all([getWorkContent(), getSiteSettings()]);
   if (!content.services.some((service) => service.key === activeService)) notFound();
 
@@ -17,11 +18,10 @@ export async function WorkPage({ activeService }: { activeService: string }) {
       <main id="top">
         <ScrollRevealObserver />
         <WorkHero hero={content.hero} />
-        <ServicesSection activeService={activeService} eyebrow={content.servicesEyebrow} services={content.services} />
+        <ServicesSection activeService={activeService} brandLogos={content.brandLogos} brandSubsection={brandSubsection} eyebrow={content.servicesEyebrow} services={content.services} />
         <CollaborationSection collaboration={content.collaboration} email={settings.email} />
       </main>
       <SiteFooter />
     </>
   );
 }
-import { notFound } from "next/navigation";

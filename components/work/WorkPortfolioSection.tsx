@@ -69,9 +69,26 @@ function PortfolioCard({
 
 export function WorkPortfolioSection({
   service,
+  brandLogos,
+  brandSubsection,
 }: {
   service: WorkContent["services"][number];
+  brandLogos: WorkContent["brandLogos"];
+  brandSubsection: "collaboration-showcase" | "brands-worked-with";
 }) {
+  if (service.key === "brand-collaborations" && brandSubsection === "brands-worked-with") {
+    return brandLogos.length > 0 ? (
+      <div className="brand-logo-grid" aria-label="Brands worked with">
+        {brandLogos.map((brand) => (
+          <div className="brand-logo-item" key={brand.id}>
+            <Image alt={brand.imageAlt} fill sizes="(max-width: 520px) 44vw, (max-width: 900px) 28vw, 220px" src={brand.image} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="brand-logo-empty">Brand logos will appear here once they are added in Sanity.</div>
+    );
+  }
   if (service.key === "scriptwriting") {
     return (
       <div className="service-work-expanded work-portfolio is-scriptwriting">
