@@ -1,3 +1,5 @@
+import {getYouTubeThumbnail} from './youtube'
+
 const HTML_ENTITY_PATTERN = /&(?:amp|quot|apos|lt|gt|#\d+|#x[\da-f]+);/gi
 
 export type LinkPreview = {
@@ -63,6 +65,70 @@ function previewFromHtml(html: string, pageUrl: string): LinkPreview | undefined
   const imageUrl = absoluteUrl(image, pageUrl)
   if (imageUrl) return {url: imageUrl, type: 'image'}
 
+  for (const tag of html.match(/<link\b[^>]*>/gi) ?? []) {
+    const attributes = readAttributes(tag)
+    const rel = attributes.get('rel')?.toLowerCase().split(/\s+/) || []
+    if (!rel.includes('image_src')) continue
+    const linkImage = absoluteUrl(attributes.get('href'), pageUrl)
+    if (linkImage) return {url: linkImage, type: 'image'}
+  }
+
+  for (const script of html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    try {
+      const json = JSON.parse(decodeHtmlEntities(script[1]))
+      const pending: unknown[] = [json]
+      while (pending.length > 0) {
+        const value = pending.shift()
+        if (!value || typeof value !== 'object') continue
+        if (Array.isArray(value)) {
+          pending.push(...value)
+          continue
+        }
+
+        const record = value as Record<string, unknown>
+        for (const key of ['thumbnailUrl', 'image']) {
+          const candidate = record[key]
+          const rawUrl =
+            typeof candidate === 'string'
+              ? candidate
+              : candidate && typeof candidate === 'object' && !Array.isArray(candidate)
+                ? (candidate as Record<string, unknown>).url
+                : Array.isArray(candidate)
+                  ? candidate[0]
+                  : undefined
+          const jsonImage = absoluteUrl(typeof rawUrl === 'string' ? rawUrl : undefined, pageUrl)
+          if (jsonImage) return {url: jsonImage, type: 'image'}
+        }
+        pending.push(...Object.values(record))
+      }
+    } catch {
+      // Ignore invalid JSON-LD and continue to HTML media fallbacks.
+    }
+  }
+
+  for (const tag of html.match(/<video\b[^>]*>/gi) ?? []) {
+    const poster = absoluteUrl(readAttributes(tag).get('poster'), pageUrl)
+    if (poster) return {url: poster, type: 'image'}
+  }
+
+  const articleMarkup = html.match(/<(?:article|main)\b[^>]*>[\s\S]*?<\/(?:article|main)>/i)?.[0] || html
+  for (const tag of articleMarkup.match(/<img\b[^>]*>/gi) ?? []) {
+    const attributes = readAttributes(tag)
+    const descriptor = `${attributes.get('class') || ''} ${attributes.get('id') || ''} ${attributes.get('alt') || ''}`.toLowerCase()
+    if (/\b(?:avatar|emoji|icon|logo|spinner|tracking|pixel)\b/.test(descriptor)) continue
+
+    const candidates = [
+      attributes.get('data-src') ||
+      attributes.get('data-lazy-src'),
+      attributes.get('src'),
+      attributes.get('srcset')?.split(',').at(-1)?.trim().split(/\s+/)[0],
+    ]
+    for (const candidate of candidates) {
+      const pageImage = absoluteUrl(candidate, pageUrl)
+      if (pageImage) return {url: pageImage, type: 'image'}
+    }
+  }
+
   const video =
     metadata.get('og:video:secure_url') ||
     metadata.get('og:video') ||
@@ -92,6 +158,37 @@ function isPublicHttpUrl(value: string) {
   }
 }
 
+function previewFromMarkdown(markdown: string): LinkPreview | undefined {
+  for (const match of markdown.matchAll(/!\[[^\]]*\]\((https?:\/\/[^)\s]+)[^)]*\)/gi)) {
+    const imageUrl = decodeHtmlEntities(match[1])
+    if (/\b(?:logo|avatar|icon|emoji|advert|ads?|banner|fonepay|payment|qr)[-_./]/i.test(imageUrl)) continue
+    return {url: imageUrl, type: 'image'}
+  }
+  return undefined
+}
+
+const browserHeaders = {
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+}
+
+async function extractedPagePreview(url: string): Promise<LinkPreview | undefined> {
+  try {
+    const response = await fetch(`https://r.jina.ai/${url}`, {
+      headers: {Accept: 'text/plain', 'User-Agent': 'Mozilla/5.0'},
+      next: {revalidate: 86_400},
+      signal: AbortSignal.timeout(15_000),
+    })
+    return response.ok
+      ? previewFromMarkdown((await response.text()).slice(0, 2_000_000))
+      : undefined
+  } catch {
+    return undefined
+  }
+}
+
 export async function getLinkPreview(url: string): Promise<LinkPreview | undefined> {
   if (!isPublicHttpUrl(url)) return undefined
 
@@ -100,23 +197,23 @@ export async function getLinkPreview(url: string): Promise<LinkPreview | undefin
 
   try {
     const response = await fetch(url, {
-      headers: {
-        Accept: 'text/html,application/xhtml+xml,image/*,video/*;q=0.9',
-        'User-Agent': 'Mozilla/5.0 (compatible; BijayaLuintelPreview/1.0)',
-      },
+      headers: browserHeaders,
       next: {revalidate: 86_400},
-      signal: AbortSignal.timeout(5_000),
+      signal: AbortSignal.timeout(8_000),
     })
-    if (!response.ok) return undefined
+    if (!response.ok) {
+      return extractedPagePreview(url)
+    }
 
     const contentType = response.headers.get('content-type')?.toLowerCase() || ''
     if (contentType.startsWith('image/')) return {url: response.url, type: 'image'}
     if (contentType.startsWith('video/')) return {url: response.url, type: 'video'}
-    if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) return undefined
+    if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) {
+      return extractedPagePreview(url)
+    }
 
-    return previewFromHtml((await response.text()).slice(0, 1_000_000), response.url)
+    return previewFromHtml((await response.text()).slice(0, 2_000_000), response.url) || extractedPagePreview(url)
   } catch {
-    return undefined
+    return extractedPagePreview(url)
   }
 }
-import {getYouTubeThumbnail} from './youtube'

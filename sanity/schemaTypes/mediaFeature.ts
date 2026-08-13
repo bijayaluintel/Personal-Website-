@@ -34,11 +34,23 @@ export const mediaFeature = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Legacy feature image',
+      title: 'Custom thumbnail (optional)',
       type: 'image',
       options: {hotspot: true},
-      description: 'Kept for existing entries. New thumbnails are generated from the published feature URL.',
-      hidden: true,
+      description: 'Upload only when you want to override the automatic URL thumbnail or when no thumbnail can be generated.',
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          description: 'Briefly describe the thumbnail for visitors using screen readers.',
+          validation: (rule) =>
+            rule.custom((value, context) => {
+              const parent = context.parent as {asset?: unknown} | undefined
+              return parent?.asset && !value ? 'Alternative text is required for a custom thumbnail.' : true
+            }),
+        }),
+      ],
     }),
     defineField({
       name: 'imageAlt',
@@ -66,9 +78,10 @@ export const mediaFeature = defineType({
     select: {
       title: 'title',
       source: 'source',
+      media: 'image',
     },
-    prepare({title, source}) {
-      return {title, subtitle: source}
+    prepare({title, source, media}) {
+      return {title, subtitle: source, media}
     },
   },
 })
