@@ -17,10 +17,11 @@ type FeaturedValue = {
   videoUrl?: string
   videoThumbnail?: ImageValue
 }
+type TextAlignment = 'left' | 'center' | 'right' | 'justify'
 
 type HomeDocument = {
-  heroTitle?: string; heroRoles?: string; heroTagline?: string; heroImage?: ImageValue; heroPrimaryLink?: LinkValue; heroSecondaryLink?: LinkValue
-  bookTitle?: string; bookDescription?: string; bookCover?: ImageValue; bookVideoLabel?: string; bookVideoPrompt?: string; bookVideoUrl?: string; bookVideoThumbnail?: ImageValue; bookPrimaryLink?: LinkValue; bookSecondaryLink?: LinkValue
+  heroTitle?: string; heroRoles?: string; heroTagline?: string; heroTaglineAlignment?: TextAlignment; heroImage?: ImageValue; heroPrimaryLink?: LinkValue; heroSecondaryLink?: LinkValue
+  bookTitle?: string; bookDescription?: string; bookDescriptionAlignment?: TextAlignment; bookCover?: ImageValue; bookVideoLabel?: string; bookVideoPrompt?: string; bookVideoUrl?: string; bookVideoThumbnail?: ImageValue; bookPrimaryLink?: LinkValue; bookSecondaryLink?: LinkValue
   quotesEyebrow?: string; quotesTitle?: string; quotesEmphasis?: string; quotesDescription?: string; quotesLabel?: string; quotes?: QuoteValue[]; readerNotesLabel?: string; readerNotes?: QuoteValue[]
   newsletterEyebrow?: string; newsletterTitle?: string; newsletterDescription?: string; newsletterPrivacy?: string
   featuredEyebrow?: string; featuredTitle?: string; featuredPosts?: FeaturedValue[]
@@ -29,8 +30,8 @@ type HomeDocument = {
 type LinkItem = {label: string; href: string}
 export type FeaturedWriting = {contentType: 'writing' | 'video'; number: string; type: string; title: string; excerpt: string; href: string; image: string; imageAlt: string}
 export type HomeContent = {
-  hero: {title: string; roles: string; tagline: string; primaryCta: LinkItem; secondaryCta: LinkItem; image: string; imageAlt: string}
-  book: {title: string; description: string; video: {label: string; prompt: string; href: string; thumbnail: string; thumbnailAlt: string}; cover: string; coverAlt: string; links: [LinkItem, LinkItem]}
+  hero: {title: string; roles: string; tagline: string; taglineAlignment: TextAlignment; primaryCta: LinkItem; secondaryCta: LinkItem; image: string; imageAlt: string}
+  book: {title: string; description: string; descriptionAlignment: TextAlignment; video: {label: string; prompt: string; href: string; thumbnail: string; thumbnailAlt: string}; cover: string; coverAlt: string; links: [LinkItem, LinkItem]}
   quotesHeading: {eyebrow: string; title: string; emphasis: string; description: string}
   quotes: Array<{type: string; items: Array<{quote: string; source: string; lang: 'ne' | 'en'}>}>
   newsletter: {eyebrow: string; title: string; description: string; privacy: string; success: string; error: string}
@@ -40,8 +41,8 @@ export type HomeContent = {
 
 const HOME_QUERY = defineQuery(/* groq */ `
   *[_type == "homePage" && _id == "homePage"][0]{
-    heroTitle, heroRoles, heroTagline, heroImage, heroPrimaryLink, heroSecondaryLink,
-    bookTitle, bookDescription, bookCover, bookVideoLabel, bookVideoPrompt, bookVideoUrl, bookVideoThumbnail, bookPrimaryLink, bookSecondaryLink,
+    heroTitle, heroRoles, heroTagline, heroTaglineAlignment, heroImage, heroPrimaryLink, heroSecondaryLink,
+    bookTitle, bookDescription, bookDescriptionAlignment, bookCover, bookVideoLabel, bookVideoPrompt, bookVideoUrl, bookVideoThumbnail, bookPrimaryLink, bookSecondaryLink,
     quotesEyebrow, quotesTitle, quotesEmphasis, quotesDescription, quotesLabel,
     quotes[]{_key, quote, source, language}, readerNotesLabel, readerNotes[]{_key, quote, source, language},
     newsletterEyebrow, newsletterTitle, newsletterDescription, newsletterPrivacy,
@@ -78,8 +79,8 @@ export async function getHomeContent(): Promise<HomeContent> {
 
   const bookVideoUrl = data.bookVideoUrl || ''
   return {
-    hero: {title: data.heroTitle || '', roles: data.heroRoles || '', tagline: data.heroTagline || '', primaryCta: link(data.heroPrimaryLink), secondaryCta: link(data.heroSecondaryLink), image: imageUrl(data.heroImage, 1400), imageAlt: data.heroImage?.alt || ''},
-    book: {title: data.bookTitle || '', description: data.bookDescription || '', video: {label: data.bookVideoLabel || '', prompt: data.bookVideoPrompt || '', href: bookVideoUrl, thumbnail: imageUrl(data.bookVideoThumbnail, 1200) || getYouTubeThumbnail(bookVideoUrl) || '', thumbnailAlt: data.bookVideoThumbnail?.alt || data.bookVideoLabel || ''}, cover: imageUrl(data.bookCover, 900), coverAlt: data.bookCover?.alt || '', links: [link(data.bookPrimaryLink), link(data.bookSecondaryLink)]},
+    hero: {title: data.heroTitle || '', roles: data.heroRoles || '', tagline: data.heroTagline || '', taglineAlignment: data.heroTaglineAlignment || 'left', primaryCta: link(data.heroPrimaryLink), secondaryCta: link(data.heroSecondaryLink), image: imageUrl(data.heroImage, 1400), imageAlt: data.heroImage?.alt || ''},
+    book: {title: data.bookTitle || '', description: data.bookDescription || '', descriptionAlignment: data.bookDescriptionAlignment || 'left', video: {label: data.bookVideoLabel || '', prompt: data.bookVideoPrompt || '', href: bookVideoUrl, thumbnail: imageUrl(data.bookVideoThumbnail, 1200) || getYouTubeThumbnail(bookVideoUrl) || '', thumbnailAlt: data.bookVideoThumbnail?.alt || data.bookVideoLabel || ''}, cover: imageUrl(data.bookCover, 900), coverAlt: data.bookCover?.alt || '', links: [link(data.bookPrimaryLink), link(data.bookSecondaryLink)]},
     quotesHeading: {eyebrow: data.quotesEyebrow || '', title: data.quotesTitle || '', emphasis: data.quotesEmphasis || '', description: data.quotesDescription || ''},
     quotes: [{type: data.quotesLabel || '', items: (data.quotes || []).map((item) => ({quote: item.quote, source: item.source, lang: item.language}))}, {type: data.readerNotesLabel || '', items: (data.readerNotes || []).map((item) => ({quote: item.quote, source: item.source, lang: item.language}))}],
     newsletter: {eyebrow: data.newsletterEyebrow || '', title: data.newsletterTitle || '', description: data.newsletterDescription || '', privacy: data.newsletterPrivacy || '', success: 'Please check your inbox to confirm your subscription.', error: 'We couldn’t complete your subscription. Please try again later.'},

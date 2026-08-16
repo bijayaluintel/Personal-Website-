@@ -12,6 +12,16 @@ const quoteFields = [
   defineField({name: 'language', title: 'Language', type: 'string', options: {list: [{title: 'Nepali', value: 'ne'}, {title: 'English', value: 'en'}], layout: 'radio'}, initialValue: 'ne', validation: (rule) => rule.required()}),
 ]
 
+const alignmentOptions = {
+  list: [
+    {title: 'Left', value: 'left'},
+    {title: 'Center', value: 'center'},
+    {title: 'Right', value: 'right'},
+    {title: 'Justify', value: 'justify'},
+  ],
+  layout: 'radio' as const,
+}
+
 export const homePage = defineType({
   name: 'homePage',
   title: 'Home Page',
@@ -27,13 +37,15 @@ export const homePage = defineType({
   fields: [
     defineField({name: 'heroTitle', title: 'Title', type: 'string', group: 'hero', validation: (rule) => rule.required()}),
     defineField({name: 'heroRoles', title: 'Roles', type: 'string', group: 'hero', validation: (rule) => rule.required()}),
-    defineField({name: 'heroTagline', title: 'Tagline', type: 'text', rows: 4, group: 'hero', validation: (rule) => rule.required()}),
+    defineField({name: 'heroTagline', title: 'Personal description', type: 'text', rows: 6, group: 'hero', description: 'Each new line is displayed as a separate paragraph.', validation: (rule) => rule.required()}),
+    defineField({name: 'heroTaglineAlignment', title: 'Personal description alignment', type: 'string', group: 'hero', options: alignmentOptions, initialValue: 'left', validation: (rule) => rule.required()}),
     defineField({name: 'heroImage', title: 'Portrait', type: 'image', options: {hotspot: true}, group: 'hero', fields: [defineField({name: 'alt', title: 'Alternative text', type: 'string', validation: (rule) => rule.required()})]}),
     defineField({name: 'heroPrimaryLink', title: 'Primary link', type: 'object', group: 'hero', fields: linkFields}),
     defineField({name: 'heroSecondaryLink', title: 'Secondary link', type: 'object', group: 'hero', fields: linkFields}),
 
     defineField({name: 'bookTitle', title: 'Book title', type: 'string', group: 'book', validation: (rule) => rule.required()}),
-    defineField({name: 'bookDescription', title: 'Book description', type: 'text', rows: 10, group: 'book', validation: (rule) => rule.required()}),
+    defineField({name: 'bookDescription', title: 'Book description', type: 'text', rows: 10, group: 'book', description: 'Each new line is displayed as a separate paragraph.', validation: (rule) => rule.required()}),
+    defineField({name: 'bookDescriptionAlignment', title: 'Book description alignment', type: 'string', group: 'book', options: alignmentOptions, initialValue: 'left', validation: (rule) => rule.required()}),
     defineField({name: 'bookCover', title: 'Book cover', type: 'image', options: {hotspot: true}, group: 'book', fields: [defineField({name: 'alt', title: 'Alternative text', type: 'string', validation: (rule) => rule.required()})]}),
     defineField({name: 'bookVideoLabel', title: 'Video label', type: 'string', group: 'book', validation: (rule) => rule.required()}),
     defineField({name: 'bookVideoPrompt', title: 'Video prompt', type: 'string', group: 'book', validation: (rule) => rule.required()}),

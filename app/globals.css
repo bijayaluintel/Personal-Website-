@@ -229,6 +229,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
   margin: 24px 0 38px;
   max-width: 620px;
 }
+.hero-tagline p { margin: 0; }
+.hero-tagline p + p { margin-top: 12px; }
 .button-row { align-items: center; display: flex; flex-wrap: wrap; gap: 30px; }
 .button {
   align-items: center;
@@ -316,6 +318,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
   line-height: 1.6;
   margin: 24px 0 28px;
 }
+.book-copy .section-description p { margin: 0; }
+.book-copy .section-description p + p { margin-top: 12px; }
 .book-praise { border-left: 1px solid rgba(250, 248, 243, 0.25); margin: 0 0 30px; padding-left: 24px; }
 .book-praise p {
   font-family: var(--font-serif), serif;

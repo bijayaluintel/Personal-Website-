@@ -8,7 +8,11 @@ export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
       <div className="hero-copy">
         <h1>{hero.title}</h1>
         <p className="hero-roles">{hero.roles}</p>
-        <p className="hero-tagline">{hero.tagline}</p>
+        <div className="hero-tagline" style={{ textAlign: hero.taglineAlignment }}>
+          {hero.tagline.split(/\r?\n+/).map((paragraph) => paragraph.trim()).filter(Boolean).map((paragraph, index) => (
+            <p key={`${index}-${paragraph}`}>{paragraph}</p>
+          ))}
+        </div>
         <div className="button-row">
           <a className="button button-dark" href={hero.primaryCta.href}>
             {hero.primaryCta.label}<ArrowIcon />

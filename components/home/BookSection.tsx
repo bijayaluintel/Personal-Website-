@@ -16,7 +16,11 @@ export function BookSection({ book }: { book: HomeContent["book"] }) {
         <div className="book-copy">
           {/* <p className="eyebrow eyebrow-light">{book.eyebrow}</p> */}
           <h2>{book.title}</h2>
-          <p className="section-description">{book.description}</p>
+          <div className="section-description" style={{ textAlign: book.descriptionAlignment }}>
+            {book.description.split(/\r?\n+/).map((paragraph) => paragraph.trim()).filter(Boolean).map((paragraph, index) => (
+              <p key={`${index}-${paragraph}`}>{paragraph}</p>
+            ))}
+          </div>
           <a
             aria-label={`${book.video.label} — YouTube मा हेर्नुहोस्`}
             className="book-video"
