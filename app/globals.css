@@ -3152,6 +3152,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
   min-height: 260px;
   padding: 48px 28px;
 }
+.brand-logo-empty strong,
+.brand-logo-empty span { display: block; }
+.brand-logo-empty strong {
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.brand-logo-empty span {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
 .work-browser-panel .service-work-expanded.work-portfolio {
   background: transparent;
   border: 0;

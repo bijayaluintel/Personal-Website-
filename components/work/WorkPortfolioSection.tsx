@@ -86,7 +86,10 @@ export function WorkPortfolioSection({
         ))}
       </div>
     ) : (
-      <div className="brand-logo-empty">Brand logos will appear here once they are added in Sanity.</div>
+      <div className="brand-logo-empty">
+        <strong>Brands Worked With</strong>
+        <span>Add and publish logos from the Brand Logos section in Sanity Studio.</span>
+      </div>
     );
   }
   if (service.key === "scriptwriting") {

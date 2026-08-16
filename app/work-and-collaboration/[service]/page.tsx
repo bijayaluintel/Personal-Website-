@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { WorkPage } from "@/components/work/WorkPage";
 import { getWorkServiceParams } from "@/sanity/lib/work";
 
@@ -17,6 +18,9 @@ export default async function WorkServicePage({
   params: Promise<{ service: string }>;
 }) {
   const { service } = await params;
+  if (service === "brand-collaborations") {
+    redirect("/work-and-collaboration/brand-collaborations/collaboration-showcase");
+  }
 
   return <WorkPage activeService={service} />;
 }
