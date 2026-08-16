@@ -42,23 +42,23 @@ export function WritingsSection({
               <span>{post.type}</span>
             </div>
             {isVideo ? (
-              <a aria-label={`${post.title} हेर्नुहोस्`} className="featured-writing-image" href={post.href} rel="noreferrer" target="_blank">
+              <a aria-label={`Watch ${post.title}`} className="featured-writing-image" href={post.href} rel="noreferrer" target="_blank">
                 {visual}
               </a>
             ) : (
-              <Link aria-label={`${post.title} पढ्नुहोस्`} className="featured-writing-image" href={post.href}>
+              <Link aria-label={`Read ${post.title}`} className="featured-writing-image" href={post.href}>
                 {visual}
               </Link>
             )}
             <h3>{post.title}</h3>
             <p>{post.excerpt}</p>
             {isVideo ? (
-              <a href={post.href} aria-label={`${post.title} हेर्नुहोस्`} rel="noreferrer" target="_blank">
-                भिडियो हेर्नुहोस् <ArrowIcon />
+              <a href={post.href} aria-label={`Watch ${post.title}`} rel="noreferrer" target="_blank">
+                Watch video <ArrowIcon />
               </a>
             ) : (
-              <Link href={post.href} aria-label={`${post.title} पढ्नुहोस्`}>
-                पूरा पढ्नुहोस् <ArrowIcon />
+              <Link href={post.href} aria-label={`Read ${post.title}`}>
+                Read full article <ArrowIcon />
               </Link>
             )}
           </article>
