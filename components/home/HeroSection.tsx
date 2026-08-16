@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { HomeContent } from "@/sanity/lib/home";
 import { ArrowIcon } from "./ArrowIcon";
 
@@ -14,12 +15,12 @@ export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
           ))}
         </div>
         <div className="button-row">
-          <a className="button button-dark" href={hero.primaryCta.href}>
-            {hero.primaryCta.label}<ArrowIcon />
-          </a>
-          <a className="text-link" href={hero.secondaryCta.href}>
-            {hero.secondaryCta.label}<ArrowIcon direction="down" />
-          </a>
+          <Link className="button button-dark" href="/writings/poems">
+            Read my writings<ArrowIcon />
+          </Link>
+          <Link className="text-link" href="/work-and-collaboration/scriptwriting">
+            Work &amp; collaboration<ArrowIcon />
+          </Link>
         </div>
       </div>
       <div className="hero-visual">
