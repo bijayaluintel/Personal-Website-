@@ -1,6 +1,7 @@
 'use client'
 
 import {useState} from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import type {SiteSettings} from '@/sanity/lib/siteSettings'
 
@@ -28,11 +29,14 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
     <header className="site-header-wrap">
       <div className="site-header">
         <Link className="site-identity" href="/" aria-label={`${settings.siteName}, home`}>
-          <span className="brand-mark">{settings.shortName}</span>
-          <span className="brand-name">
-            <strong>{settings.siteName}</strong>
-            <small>{settings.roleLabel}</small>
-          </span>
+          <Image
+            alt={`${settings.siteName} logo`}
+            className="site-navbar-logo"
+            height={74}
+            priority
+            src="/navbar-logo-tight.png"
+            width={74}
+          />
         </Link>
 
         <nav aria-label="Primary navigation" className={menuOpen ? 'primary-nav is-open' : 'primary-nav'}>

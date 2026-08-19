@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 220" preserveAspectRatio="none">
+  <defs>
+    <filter id="rough-paper" x="-4%" y="-18%" width="108%" height="136%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.075" numOctaves="3" seed="17" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+  <path
+    d="M-30 67 C26 55 61 70 111 58 C153 48 188 66 231 55 C278 43 316 64 361 53 C407 41 443 61 491 50 C535 40 572 59 618 49 C666 38 703 58 750 47 C796 37 833 57 882 48 C930 39 967 59 1017 49 C1065 39 1102 60 1152 50 C1198 41 1238 61 1286 51 C1337 40 1376 61 1425 50 C1474 40 1518 58 1559 48 C1584 43 1608 48 1630 43 L1630 240 L-30 240 Z"
+    fill="white"
+    filter="url(#rough-paper)"
+  />
+</svg>
