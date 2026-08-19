@@ -40,6 +40,22 @@ export const homePage = defineType({
     defineField({name: 'heroTagline', title: 'Personal description', type: 'text', rows: 6, group: 'hero', description: 'Each new line is displayed as a separate paragraph.', validation: (rule) => rule.required()}),
     defineField({name: 'heroTaglineAlignment', title: 'Personal description alignment', type: 'string', group: 'hero', options: alignmentOptions, initialValue: 'left', validation: (rule) => rule.required()}),
     defineField({name: 'heroImage', title: 'Portrait', type: 'image', options: {hotspot: true}, group: 'hero', fields: [defineField({name: 'alt', title: 'Alternative text', type: 'string', validation: (rule) => rule.required()})]}),
+    defineField({
+      name: 'heroCutoutImage',
+      title: 'Hero cutout portrait',
+      type: 'image',
+      group: 'hero',
+      description: 'Upload a PNG or WebP with a transparent background. It will use the current hero size, position, and torn-edge overlap.',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        }),
+      ],
+    }),
     defineField({name: 'heroPrimaryLink', title: 'Primary link', type: 'object', group: 'hero', fields: linkFields}),
     defineField({name: 'heroSecondaryLink', title: 'Secondary link', type: 'object', group: 'hero', fields: linkFields}),
 
