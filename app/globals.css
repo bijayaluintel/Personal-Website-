@@ -195,7 +195,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   color: var(--ink);
   display: grid;
   gap: clamp(28px, 4vw, 68px);
-  grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+  grid-template-columns: minmax(0, 0.86fr) minmax(440px, 1.14fr);
   max-width: none;
   min-height: auto;
   overflow: hidden;
@@ -242,7 +242,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: 720px;
 }
 .hero h1::first-line { font-style: italic; }
-.hero-copy { max-width: 700px; position: relative; transform: none; z-index: 2; }
+.hero-copy { align-self: center; max-width: 700px; position: relative; transform: none; z-index: 2; }
 .hero-roles {
   color: var(--rust);
   font-size: clamp(15px, 1.5vw, 18px);
@@ -297,10 +297,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
   justify-self: end;
   margin-bottom: 0;
   margin-right: -35px;
-  max-width: 520px;
+  max-width: 580px;
   position: relative;
   transform: none;
-  width: min(100%, 520px);
+  width: min(100%, 580px);
   z-index: 2;
 }
 .hero-image-frame {
@@ -2733,9 +2733,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .award-entry-copy { width: 100%; }
   .award-entry-copy h3 { margin-block: 24px 16px; }
   .hero { display: flex; flex-direction: column; min-height: auto; padding: 52px 22px 120px; }
-  .hero-copy { transform: none; width: 100%; }
+  .hero-copy { align-self: stretch; transform: none; width: 100%; }
   .hero h1 { font-size: clamp(54px, 17vw, 78px); line-height: 0.92; }
-  .hero-visual { margin: 10px auto 0; max-width: 400px; transform: none; width: min(82vw, 400px); }
+  .hero-visual { margin: 10px auto 0; max-width: 420px; transform: none; width: min(86vw, 420px); }
   .hero::after { bottom: -20px; height: 88px; }
   .image-note { bottom: 20px; left: -20px; }
   .book-grid { display: flex; flex-direction: column; gap: 30px; padding-block: 46px; }
