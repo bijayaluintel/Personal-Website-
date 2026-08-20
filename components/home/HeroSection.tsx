@@ -25,7 +25,9 @@ export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
       </div>
       <div className="hero-visual">
         <div className="hero-image-frame">
-          <Image alt={hero.imageAlt} fill priority sizes="(max-width: 760px) 88vw, 44vw" src={hero.image} />
+          <div className="hero-photo-mat">
+            <Image alt={hero.imageAlt} fill priority sizes="(max-width: 760px) 76vw, 38vw" src={hero.image} />
+          </div>
         </div>
         {/* <p className="image-note">Words for the spaces in between.</p> */}
       </div>

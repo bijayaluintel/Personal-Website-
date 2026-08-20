@@ -55,6 +55,12 @@ function imageUrl(image: ImageValue | undefined, width: number) {
   return image ? urlFor(image).width(width).quality(85).auto('format').url() : ''
 }
 
+function framedHeroImageUrl(image: ImageValue | undefined) {
+  return image
+    ? urlFor(image).width(1100).height(1375).fit('crop').quality(88).auto('format').url()
+    : ''
+}
+
 function link(value?: LinkValue): LinkItem {
   return {label: value?.label || '', href: value?.url || '#'}
 }
@@ -79,7 +85,7 @@ export async function getHomeContent(): Promise<HomeContent> {
 
   const bookVideoUrl = data.bookVideoUrl || ''
   return {
-    hero: {title: data.heroTitle || '', roles: data.heroRoles || '', tagline: data.heroTagline || '', taglineAlignment: data.heroTaglineAlignment || 'left', primaryCta: link(data.heroPrimaryLink), secondaryCta: link(data.heroSecondaryLink), image: imageUrl(data.heroCutoutImage || data.heroImage, 1400) || '/bijaya-hero-cutout-v3.png', imageAlt: data.heroCutoutImage?.alt || data.heroImage?.alt || 'Bijaya Luintel'},
+    hero: {title: data.heroTitle || '', roles: data.heroRoles || '', tagline: data.heroTagline || '', taglineAlignment: data.heroTaglineAlignment || 'left', primaryCta: link(data.heroPrimaryLink), secondaryCta: link(data.heroSecondaryLink), image: framedHeroImageUrl(data.heroImage) || '/bijaya-hero-cutout-v3.png', imageAlt: data.heroImage?.alt || 'Bijaya Luintel'},
     book: {title: data.bookTitle || '', description: data.bookDescription || '', descriptionAlignment: data.bookDescriptionAlignment || 'left', video: {label: data.bookVideoLabel || '', prompt: data.bookVideoPrompt || '', href: bookVideoUrl, thumbnail: imageUrl(data.bookVideoThumbnail, 1200) || getYouTubeThumbnail(bookVideoUrl) || '', thumbnailAlt: data.bookVideoThumbnail?.alt || data.bookVideoLabel || ''}, cover: imageUrl(data.bookCover, 900), coverAlt: data.bookCover?.alt || '', links: [link(data.bookPrimaryLink), link(data.bookSecondaryLink)]},
     quotesHeading: {eyebrow: data.quotesEyebrow || '', title: data.quotesTitle || '', emphasis: data.quotesEmphasis || '', description: data.quotesDescription || ''},
     quotes: [{type: data.quotesLabel || '', items: (data.quotes || []).map((item) => ({quote: item.quote, source: item.source, lang: item.language}))}, {type: data.readerNotesLabel || '', items: (data.readerNotes || []).map((item) => ({quote: item.quote, source: item.source, lang: item.language}))}],

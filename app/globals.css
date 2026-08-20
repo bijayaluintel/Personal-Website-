@@ -190,16 +190,16 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .mobile-contact, .menu-toggle { display: none; }
 
 .hero {
-  align-items: center;
+  align-items: start;
   background: var(--hero-bg);
   color: var(--ink);
   display: grid;
   gap: clamp(28px, 4vw, 68px);
   grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
   max-width: none;
-  min-height: calc(100svh - 80px);
+  min-height: auto;
   overflow: hidden;
-  padding: 72px max(48px, calc((100vw - 1240px) / 2 + 48px)) 92px;
+  padding: 90px max(48px, calc((100vw - 1240px) / 2 + 48px)) 206px;
   position: relative;
 }
 .hero::after {
@@ -242,7 +242,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: 720px;
 }
 .hero h1::first-line { font-style: italic; }
-.hero-copy { max-width: 700px; position: relative; transform: translateY(-118px); z-index: 2; }
+.hero-copy { max-width: 700px; position: relative; transform: none; z-index: 2; }
 .hero-roles {
   color: var(--rust);
   font-size: clamp(15px, 1.5vw, 18px);
@@ -293,26 +293,46 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hero .button-dark:hover { background: var(--rust); color: var(--paper-light); }
 .hero .text-link { color: var(--ink); }
 .hero-visual {
-  align-self: end;
+  align-self: start;
   justify-self: end;
   margin-bottom: 0;
   margin-right: -35px;
-  max-width: 550px;
+  max-width: 520px;
   position: relative;
-  transform: translateY(-70px);
-  width: min(100%, 550px);
+  transform: none;
+  width: min(100%, 520px);
   z-index: 2;
 }
 .hero-image-frame {
-  aspect-ratio: 570 / 884;
-  background: transparent;
-  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(76, 71, 58, 0.07) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 64%, rgba(76, 71, 58, 0.05) 0 1px, transparent 1.5px),
+    #eee8d9;
+  background-size: 19px 19px, 23px 23px, auto;
+  clip-path: polygon(3% 1%, 16% 3%, 29% 1%, 43% 2%, 57% 0, 71% 2%, 85% 1%, 98% 4%, 97% 18%, 99% 33%, 97% 48%, 99% 62%, 97% 77%, 99% 91%, 96% 99%, 82% 97%, 68% 99%, 53% 97%, 38% 99%, 23% 97%, 8% 99%, 1% 95%, 3% 80%, 1% 65%, 3% 50%, 1% 35%, 3% 20%, 1% 7%);
+  isolation: isolate;
+  overflow: visible;
   position: relative;
+  transform: rotate(-0.7deg);
 }
-.hero-image-frame::after {
-  content: none;
+.hero-image-frame::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  background: #aeb5a1;
+  clip-path: polygon(4% 2%, 18% 1%, 31% 3%, 45% 1%, 59% 2%, 73% 0, 87% 3%, 98% 2%, 99% 16%, 97% 31%, 100% 45%, 98% 60%, 100% 74%, 97% 88%, 99% 98%, 84% 97%, 70% 100%, 55% 98%, 40% 100%, 25% 97%, 10% 99%, 2% 96%, 3% 82%, 1% 68%, 3% 53%, 1% 38%, 3% 23%, 1% 10%);
+  inset: -2%;
+  transform: rotate(1.8deg);
+  z-index: -2;
 }
-.hero-image-frame img { filter: contrast(1.03) saturate(0.92); object-fit: contain; }
+.hero-photo-mat {
+  clip-path: polygon(2% 1%, 20% 2%, 39% 1%, 58% 2%, 78% 1%, 99% 3%, 98% 22%, 99% 42%, 98% 62%, 99% 82%, 97% 99%, 78% 98%, 59% 99%, 40% 98%, 20% 99%, 1% 97%, 2% 78%, 1% 58%, 2% 38%, 1% 18%);
+  inset: 6%;
+  overflow: hidden;
+  position: absolute;
+}
+.hero-photo-mat img { filter: contrast(1.03) saturate(0.96); object-fit: cover; }
 .image-note {
   background: var(--paper-light);
   bottom: 30px;
@@ -2712,10 +2732,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .award-visual { margin-inline: auto; width: 72%; }
   .award-entry-copy { width: 100%; }
   .award-entry-copy h3 { margin-block: 24px 16px; }
-  .hero { display: flex; flex-direction: column; min-height: auto; padding: 58px 22px 80px; }
+  .hero { display: flex; flex-direction: column; min-height: auto; padding: 52px 22px 120px; }
   .hero-copy { transform: none; width: 100%; }
   .hero h1 { font-size: clamp(54px, 17vw, 78px); line-height: 0.92; }
-  .hero-visual { margin: 10px auto 20px; max-width: 430px; transform: translateY(-35px); width: min(84vw, 430px); }
+  .hero-visual { margin: 10px auto 0; max-width: 400px; transform: none; width: min(82vw, 400px); }
   .hero::after { bottom: -20px; height: 88px; }
   .image-note { bottom: 20px; left: -20px; }
   .book-grid { display: flex; flex-direction: column; gap: 30px; padding-block: 46px; }
