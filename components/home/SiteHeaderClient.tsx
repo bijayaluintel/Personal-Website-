@@ -35,6 +35,7 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
             height={74}
             priority
             src={settings.headerLogoUrl}
+            style={{height: settings.headerLogoSize, width: settings.headerLogoSize}}
             width={74}
           />
         </Link>

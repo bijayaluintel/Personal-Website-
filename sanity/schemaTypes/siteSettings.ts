@@ -23,6 +23,7 @@ export const siteSettings = defineType({
     roleLabel: 'Writer & storyteller',
     email: 'hello@bijayaluintel.com',
     contactButtonLabel: 'Work with me',
+    headerLogoSize: 78,
     footerPrompt: 'Have a thought to share?',
     socialHeading: 'Follow along',
     copyrightName: 'Bijaya Luintel',
@@ -67,7 +68,7 @@ export const siteSettings = defineType({
       title: 'Header logo',
       type: 'image',
       group: 'header',
-      description: 'Shown at the left of the site header. A transparent PNG or WebP works best.',
+      description: 'Shown at the left of the site header. Upload a transparent PNG or WebP so the logo has no background.',
       options: {hotspot: true},
       fields: [
         defineField({
@@ -78,6 +79,15 @@ export const siteSettings = defineType({
           validation: (rule) => rule.required().warning('Alternative text improves accessibility.'),
         }),
       ],
+    }),
+    defineField({
+      name: 'headerLogoSize',
+      title: 'Logo size',
+      type: 'number',
+      group: 'header',
+      description: 'Logo width and height in pixels. Choose a value from 40 to 140.',
+      initialValue: 78,
+      validation: (rule) => rule.integer().min(40).max(140),
     }),
     defineField({
       name: 'navigation',

@@ -69,6 +69,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   flex-shrink: 0;
 }
 .site-navbar-logo {
+  background: transparent;
   display: block;
   filter: brightness(1.25) contrast(1.08);
   height: 78px;
