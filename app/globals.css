@@ -1174,6 +1174,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .writing-post-content .writing-poem-block { margin: 0; }
 .writing-post-content .writing-poem-block + .writing-poem-block { margin-top: 0; }
+.writing-post-content .writing-poem-spacer { height: 1.15em; }
+.writing-post-content .writing-poem-spacer + .writing-poem-spacer { display: none; }
 .writing-post-content .writing-poem-author {
   font-family: var(--font-sans), sans-serif;
   font-size: clamp(17px, 1.4vw, 20px);

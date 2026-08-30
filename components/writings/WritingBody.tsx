@@ -93,6 +93,11 @@ const components: PortableTextComponents = {
       const text = value.children
         ?.map((child) => ('text' in child ? child.text : ''))
         .join('')
+
+      if (!text?.trim()) {
+        return <div aria-hidden="true" className="writing-poem-spacer" />
+      }
+
       const signature = text?.match(/(?:^|\n)\s*([-–—]\s*[^\n]+)\s*$/)
 
       if (!signature) {
