@@ -63,6 +63,23 @@ export const siteSettings = defineType({
     defineField({name: 'roleLabel', title: 'Role below the name', type: 'string', group: 'identity', validation: (rule) => rule.required()}),
     defineField({name: 'email', title: 'Contact email', type: 'email', group: 'identity', validation: (rule) => rule.required()}),
     defineField({
+      name: 'headerLogo',
+      title: 'Header logo',
+      type: 'image',
+      group: 'header',
+      description: 'Shown at the left of the site header. A transparent PNG or WebP works best.',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alternative text',
+          type: 'string',
+          description: 'Describe the logo for visitors using assistive technology.',
+          validation: (rule) => rule.required().warning('Alternative text improves accessibility.'),
+        }),
+      ],
+    }),
+    defineField({
       name: 'navigation',
       title: 'Navigation',
       type: 'array',

@@ -30,11 +30,11 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
       <div className="site-header">
         <Link className="site-identity" href="/" aria-label={`${settings.siteName}, home`}>
           <Image
-            alt={`${settings.siteName} logo`}
+            alt={settings.headerLogoAlt}
             className="site-navbar-logo"
             height={74}
             priority
-            src="/navbar-logo-tight.png"
+            src={settings.headerLogoUrl}
             width={74}
           />
         </Link>
