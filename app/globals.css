@@ -59,14 +59,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
   align-items: center;
   display: grid;
   grid-template-columns: auto 1fr auto;
+  height: 80px;
   margin-inline: auto;
   max-width: 1340px;
-  padding: 1px 48px;
+  padding-inline: 48px;
 }
 .site-identity {
   align-items: center;
   display: flex;
   flex-shrink: 0;
+  height: 100%;
+  position: relative;
+  z-index: 1;
 }
 .site-navbar-logo {
   background: transparent;
@@ -2562,7 +2566,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 700px) {
   .section-shell { padding-inline: 22px; }
-  .site-header { padding: 3px 22px; }
+  .site-header { padding-inline: 22px; }
   .primary-nav { padding: 16px 22px 28px; }
   .nav-list { display: block; }
   .nav-item:nth-child(even) { border-left: 0; padding-left: 0; }
