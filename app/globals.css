@@ -66,6 +66,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .site-identity {
   align-items: center;
+  align-self: center;
   display: flex;
   flex-shrink: 0;
   height: 100%;
@@ -191,6 +192,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   text-transform: uppercase;
   transition: background 180ms ease, transform 180ms ease;
 }
+.header-contact { align-self: center; }
 .header-contact:hover { background: var(--rust); transform: translateY(-1px); }
 .mobile-contact, .menu-toggle { display: none; }
 
@@ -2499,6 +2501,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .header-contact { display: none; }
   .menu-toggle {
     align-items: center;
+    align-self: center;
     background: transparent;
     border: 1px solid var(--line);
     border-radius: 50%;
