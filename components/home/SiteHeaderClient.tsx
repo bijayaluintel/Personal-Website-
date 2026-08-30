@@ -28,7 +28,12 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
   return (
     <header className="site-header-wrap">
       <div className="site-header">
-        <Link className="site-identity" href="/" aria-label={`${settings.siteName}, home`}>
+        <Link
+          className="site-identity"
+          href="/"
+          aria-label={`${settings.siteName}, home`}
+          style={{width: settings.headerLogoSize}}
+        >
           <Image
             alt={settings.headerLogoAlt}
             className="site-navbar-logo"

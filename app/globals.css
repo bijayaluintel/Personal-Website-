@@ -78,7 +78,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
   display: block;
   filter: brightness(1.25) contrast(1.08);
   height: 78px;
+  left: 50%;
   object-fit: contain;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 78px;
 }
 .brand-mark {
