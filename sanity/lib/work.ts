@@ -49,7 +49,9 @@ export async function getWorkContent(): Promise<WorkContent> {
       brandLogos: data.brandLogos.map((brand) => ({
         id: brand._id,
         brandName: brand.brandName,
-        image: urlFor(brand.logo).width(800).height(500).fit('max').quality(90).auto('format').url(),
+        // Build from the original asset reference so an accidental Studio crop or
+        // hotspot can never cut off part of a logo.
+        image: urlFor(brand.logo.asset as SanityImageSource).width(800).height(500).fit('max').quality(90).auto('format').url(),
         imageAlt: brand.logo.alt || `${brand.brandName} logo`,
       })),
       collaboration: {eyebrow: data.page?.collaborationEyebrow || '', title: data.page?.collaborationTitle || '', description: data.page?.collaborationDescription || ''},

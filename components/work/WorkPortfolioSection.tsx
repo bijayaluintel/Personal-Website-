@@ -82,7 +82,13 @@ export function WorkPortfolioSection({
         {brandLogos.map((brand) => (
           <div className="brand-logo-item" key={brand.id}>
             <div className="brand-logo-frame">
-              <Image alt={brand.imageAlt} fill sizes="(max-width: 520px) 44vw, (max-width: 900px) 28vw, 220px" src={brand.image} />
+              <Image
+                alt={brand.imageAlt}
+                fill
+                sizes="(max-width: 520px) 44vw, (max-width: 900px) 28vw, 220px"
+                src={brand.image}
+                style={{objectFit: "contain"}}
+              />
             </div>
           </div>
         ))}

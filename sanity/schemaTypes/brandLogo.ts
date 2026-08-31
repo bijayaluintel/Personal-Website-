@@ -18,7 +18,7 @@ export const brandLogo = defineType({
       name: 'logo',
       title: 'Logo',
       type: 'image',
-      options: {hotspot: true},
+      description: 'Upload the complete, uncropped logo. It will automatically scale to fit inside its card.',
       validation: (rule) => rule.required(),
       fields: [
         defineField({
