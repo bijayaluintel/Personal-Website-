@@ -3228,11 +3228,17 @@ a, button { -webkit-tap-highlight-color: transparent; }
   aspect-ratio: 4 / 3;
   background: var(--paper);
   border: 1px solid var(--line);
+  overflow: hidden;
+  padding: 24px;
   position: relative;
 }
-.brand-logo-item img {
+.brand-logo-frame {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+.brand-logo-frame img {
   object-fit: contain;
-  padding: 24px;
 }
 .brand-logo-empty {
   color: var(--muted);
@@ -3396,7 +3402,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
     padding: 14px;
   }
-  .brand-logo-item img { padding: 16px; }
+  .brand-logo-item { padding: 16px; }
   .work-browser-panel .service-work-expanded.work-portfolio {
     margin: 0;
     padding: 25px 14px 18px;

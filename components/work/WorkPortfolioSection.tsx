@@ -81,7 +81,9 @@ export function WorkPortfolioSection({
       <div className="brand-logo-grid" aria-label="Brands worked with">
         {brandLogos.map((brand) => (
           <div className="brand-logo-item" key={brand.id}>
-            <Image alt={brand.imageAlt} fill sizes="(max-width: 520px) 44vw, (max-width: 900px) 28vw, 220px" src={brand.image} />
+            <div className="brand-logo-frame">
+              <Image alt={brand.imageAlt} fill sizes="(max-width: 520px) 44vw, (max-width: 900px) 28vw, 220px" src={brand.image} />
+            </div>
           </div>
         ))}
       </div>
