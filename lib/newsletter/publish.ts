@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { createClient, defineQuery } from 'next-sanity'
+import { createImageUrlBuilder, type SanityImageSource } from '@sanity/image-url'
 
 export type NewsletterEvent = { _id: string; _type: string; operation: string }
 type Writing = {
@@ -8,6 +9,7 @@ type Writing = {
   excerpt: string
   category: string
   slug: string
+  mainImage?: SanityImageSource & {asset?: {url?: string}; alt?: string}
 }
 type NewsletterIssue = {
   subject: string
@@ -18,7 +20,10 @@ type NewsletterIssue = {
 const ISSUE_QUERY = defineQuery(/* groq */ `
   *[_id == $id && _type == "newsletterIssue"][0]{
     subject, introduction,
-    "articles": articles[]->{_id, title, excerpt, category, "slug": slug.current}
+    "articles": articles[]->{
+      _id, title, excerpt, category, "slug": slug.current,
+      mainImage{alt, crop, hotspot, asset->{url}}
+    }
   }
 `)
 
@@ -72,8 +77,19 @@ export function buildNewsletterEmail(issue: NewsletterIssue, siteUrl: string) {
       `/writings/${encodeURIComponent(writing.category)}/${encodeURIComponent(writing.slug)}`,
       origin.origin,
     ).href
+    let imageHtml = ''
+    if (writing.mainImage?.asset?.url) {
+      const imageUrl = createImageUrlBuilder({
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+      }).image(writing.mainImage).width(1200).fit('max').format('jpg').quality(85).url()
+      imageHtml = `<p><a href="${escapeHtml(link)}"><img src="${escapeHtml(imageUrl)}" ` +
+        `alt="${escapeHtml(writing.mainImage.alt || writing.title)}" width="600" ` +
+        `style="display:block;width:100%;max-width:600px;height:auto;border:0;" /></a></p>`
+    }
     return (
       `<h2>${escapeHtml(writing.title)}</h2>` +
+      imageHtml +
       `<p>${escapeHtml(writing.excerpt).replace(/\r?\n/g, '<br />')}</p>` +
       `<p><a href="${escapeHtml(link)}">पूरा रचना पढ्नुहोस् / Read the full piece</a></p>`
     )

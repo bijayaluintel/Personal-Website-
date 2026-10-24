@@ -4,6 +4,7 @@ import fs from 'node:fs'
 import vm from 'node:vm'
 import ts from 'typescript'
 import crypto from 'node:crypto'
+import * as sanityImageUrl from '@sanity/image-url'
 
 const event = { _id: 'issue-1', _type: 'newsletterIssue', operation: 'create' }
 const writing = {
@@ -79,6 +80,7 @@ function setup(overrides = {}) {
     (name) =>
       name === 'node:crypto'
         ? crypto
+        : name === '@sanity/image-url' ? sanityImageUrl
         : { createClient: () => client, defineQuery: (x) => x },
     {
       process: { env: { ...env, ...overrides.env } },
@@ -245,4 +247,27 @@ test('route requires a secret and ignores update events', async () => {
   })
   assert.equal((await route.POST({})).status, 200)
   assert.equal(called, false)
+})
+
+
+test('article photo appears between its title and excerpt with safe alt text', () => {
+  const p = setup()
+  const photo = {asset: {url: 'https://cdn.sanity.io/images/test/production/abcdef123456-1200x800.jpg'}, alt: 'Photo "title" & scenery'}
+  const email = p.buildNewsletterEmail({...issue, articles: [{...writing, mainImage: photo}]}, env.SITE_URL)
+  assert.ok(email.content.indexOf('<h2>') < email.content.indexOf('<img '))
+  assert.ok(email.content.indexOf('<img ') < email.content.indexOf('First line'))
+  assert.ok(email.content.includes('alt="Photo &quot;title&quot; &amp; scenery"'))
+  assert.ok(email.content.includes('w=1200'))
+  assert.ok(email.content.includes('fm=jpg'))
+  assert.ok(email.content.includes('height:auto'))
+  const fallback = p.buildNewsletterEmail({...issue, articles: [{...writing, mainImage: {...photo, alt: ''}}]}, env.SITE_URL)
+  assert.ok(fallback.content.includes('alt="कविता &amp; &lt;Title&gt;"'))
+})
+test('articles without a photo have no broken image placeholder', () => {
+  const p = setup()
+  for (const mainImage of [undefined, null, {asset: null}]) {
+    const email = p.buildNewsletterEmail({...issue, articles: [{...writing, mainImage}]}, env.SITE_URL)
+    assert.ok(!email.content.includes('<img'))
+    assert.ok(email.content.includes('Read the full piece'))
+  }
 })

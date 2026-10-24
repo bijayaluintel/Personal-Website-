@@ -70,7 +70,7 @@ The **Create draft in Kit** action uses Sanity's validated publish operation on 
 8. Review the sender, recipients (Website Newsletter segment), introduction, article order, links and footer. Send a preview to your own email using Kit.
 9. When ready, send or schedule the email from Kit. Kit manages confirmed recipients and unsubscribes.
 
-The email contains each selection's title, excerpt and link to its full website page. One issue produces one draft. Further changes to the issue or its articles do not update a Kit draft: edit the email in Kit. Create a new issue for the next newsletter. Studio's delivery status tracks draft creation, not subsequent sends, opens or bounces; view those in Kit.
+The email contains each selection's title, main photo (when available), excerpt and link to its full website page. The photo appears directly below its title, scales to the email width, and links to the article. Existing Kit drafts are not updated; this applies to newly created drafts. One issue produces one draft. Further changes to the issue or its articles do not update a Kit draft: edit the email in Kit. Create a new issue for the next newsletter. Studio's delivery status tracks draft creation, not subsequent sends, opens or bounces; view those in Kit.
 
 ## Troubleshooting and duplicate protection
 
