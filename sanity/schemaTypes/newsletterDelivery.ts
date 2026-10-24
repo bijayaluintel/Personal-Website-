@@ -6,7 +6,8 @@ export const newsletterDelivery = defineType({
   type: 'document',
   readOnly: true,
   fields: [
-    defineField({ name: 'title', title: 'Writing title', type: 'string' }),
+    defineField({ name: 'title', title: 'Email subject', type: 'string' }),
+    defineField({name: 'issue', title: 'Newsletter issue', type: 'reference', to: [{type: 'newsletterIssue'}], weak: true}),
     defineField({
       name: 'writing',
       title: 'Writing',

@@ -1,8 +1,8 @@
 import type { NextRequest } from 'next/server'
 import { parseBody } from 'next-sanity/webhook'
 import {
-  isPublicationEvent,
-  publishWritingEmail,
+  isNewsletterEvent,
+  createNewsletterDraft,
 } from '@/lib/newsletter/publish'
 
 export const runtime = 'nodejs'
@@ -25,11 +25,11 @@ export async function POST(request: NextRequest) {
   } catch {
     return Response.json({ message: 'Invalid webhook' }, { status: 400 })
   }
-  if (!isPublicationEvent(event)) {
+  if (!isNewsletterEvent(event)) {
     return Response.json({ status: 'skipped' })
   }
   try {
-    return Response.json(await publishWritingEmail(event))
+    return Response.json(await createNewsletterDraft(event))
   } catch (error) {
     console.error(
       'Newsletter publishing failed:',

@@ -1,18 +1,24 @@
 import { createHash } from 'node:crypto'
 import { createClient, defineQuery } from 'next-sanity'
 
-export type PublicationEvent = { _id: string; _type: string; operation: string }
+export type NewsletterEvent = { _id: string; _type: string; operation: string }
 type Writing = {
+  _id: string
   title: string
   excerpt: string
   category: string
   slug: string
-  publishedAt: string
+}
+type NewsletterIssue = {
+  subject: string
+  introduction?: string
+  articles: Array<Writing | null>
 }
 
-const WRITING_QUERY = defineQuery(/* groq */ `
-  *[_id == $id && _type == "writing"][0]{
-    title, excerpt, category, "slug": slug.current, publishedAt
+const ISSUE_QUERY = defineQuery(/* groq */ `
+  *[_id == $id && _type == "newsletterIssue"][0]{
+    subject, introduction,
+    "articles": articles[]->{_id, title, excerpt, category, "slug": slug.current}
   }
 `)
 
@@ -30,39 +36,76 @@ function escapeHtml(value: string) {
   )
 }
 
-export function buildWritingEmail(writing: Writing, siteUrl: string) {
+export function buildNewsletterEmail(issue: NewsletterIssue, siteUrl: string) {
   const origin = new URL(siteUrl)
   if (origin.protocol !== 'https:' || origin.username || origin.password) {
     throw new Error('SITE_URL must be a public HTTPS website URL')
   }
-  const link = new URL(
-    `/writings/${encodeURIComponent(writing.category)}/${encodeURIComponent(writing.slug)}`,
-    origin.origin,
-  ).href
-  return {
-    subject: writing.title.replace(/[\r\n]+/g, ' ').trim(),
-    preview_text: writing.excerpt.slice(0, 150),
-    content:
-      `<h1>${escapeHtml(writing.title)}</h1>` +
+  if (
+    !issue.subject?.trim() ||
+    !Array.isArray(issue.articles) ||
+    issue.articles.length < 3 ||
+    issue.articles.length > 4
+  ) {
+    throw new Error(
+      'Select 3–4 published articles and enter a newsletter subject',
+    )
+  }
+  const ids = new Set<string>()
+  const articles = issue.articles.map((writing) => {
+    if (
+      !writing ||
+      !writing._id ||
+      writing._id.startsWith('drafts.') ||
+      writing._id.startsWith('versions.') ||
+      ids.has(writing._id) ||
+      !writing.title?.trim() ||
+      !writing.excerpt?.trim() ||
+      !writing.slug?.trim() ||
+      !['poems', 'stories', 'memoirs', 'others'].includes(writing.category)
+    ) {
+      throw new Error(
+        'Every selection must be a different published writing with a title, excerpt and URL',
+      )
+    }
+    ids.add(writing._id)
+    const link = new URL(
+      `/writings/${encodeURIComponent(writing.category)}/${encodeURIComponent(writing.slug)}`,
+      origin.origin,
+    ).href
+    return (
+      `<h2>${escapeHtml(writing.title)}</h2>` +
       `<p>${escapeHtml(writing.excerpt).replace(/\r?\n/g, '<br />')}</p>` +
-      `<p><a href="${escapeHtml(link)}">पूरा रचना पढ्नुहोस् / Read the full piece</a></p>`,
+      `<p><a href="${escapeHtml(link)}">पूरा रचना पढ्नुहोस् / Read the full piece</a></p>`
+    )
+  })
+  const introduction = issue.introduction?.trim() || ''
+  return {
+    subject: issue.subject.replace(/[\r\n]+/g, ' ').trim(),
+    preview_text: (introduction || issue.articles[0]!.excerpt).slice(0, 150),
+    content:
+      `<h1>${escapeHtml(issue.subject)}</h1>` +
+      (introduction
+        ? `<p>${escapeHtml(introduction).replace(/\r?\n/g, '<br />')}</p>`
+        : '') +
+      articles.join('<hr />'),
   }
 }
 
-export function isPublicationEvent(value: unknown): value is PublicationEvent {
+export function isNewsletterEvent(value: unknown): value is NewsletterEvent {
   if (!value || typeof value !== 'object') return false
-  const event = value as Partial<PublicationEvent>
+  const event = value as Partial<NewsletterEvent>
   return (
     typeof event._id === 'string' &&
     /^[a-zA-Z0-9_.-]+$/.test(event._id) &&
     !event._id.startsWith('drafts.') &&
     !event._id.startsWith('versions.') &&
-    event._type === 'writing' &&
+    event._type === 'newsletterIssue' &&
     event.operation === 'create'
   )
 }
 
-export async function publishWritingEmail(event: PublicationEvent) {
+export async function createNewsletterDraft(event: NewsletterEvent) {
   const {
     KIT_API_KEY,
     KIT_NEWSLETTER_SEGMENT_ID,
@@ -96,41 +139,25 @@ export async function publishWritingEmail(event: PublicationEvent) {
     timeout: 10000,
     maxRetries: 0,
   })
-  const writing = await client.fetch<Writing | null>(
-    WRITING_QUERY,
+  // Only the published issue and published versions of its selections can be emailed.
+  const issue = await client.fetch<NewsletterIssue | null>(
+    ISSUE_QUERY,
     { id: event._id },
     { cache: 'no-store' },
   )
-  if (!writing)
-    return { status: 'skipped', reason: 'Writing is no longer published' }
-  if (
-    !writing.title?.trim() ||
-    !writing.slug?.trim() ||
-    !writing.excerpt?.trim() ||
-    !['poems', 'stories', 'memoirs', 'others'].includes(writing.category) ||
-    !Number.isFinite(Date.parse(writing.publishedAt))
-  ) {
-    throw new Error('Published writing is missing required email content')
-  }
-  const email = buildWritingEmail(writing, SITE_URL)
-  const autoSend = process.env.NEWSLETTER_AUTO_SEND === 'true'
-  // Five minutes allows the public page cache to refresh and gives the editor time to cancel in Kit.
-  const sendAt = autoSend
-    ? new Date(
-        Math.max(Date.now(), Date.parse(writing.publishedAt)) + 5 * 60 * 1000,
-      ).toISOString()
-    : null
+  if (!issue)
+    throw new Error('Newsletter issue is not available; retry the webhook')
+  const email = buildNewsletterEmail(issue, SITE_URL)
   // This deterministic ID is an integration lock, not an ordinary content document ID.
-  // It survives unpublishing and republishing the source writing.
+  // Retrying the issue cannot create another Kit draft.
   const deliveryId = `newsletterDelivery.${createHash('sha256').update(event._id).digest('hex')}`
   try {
     await client.create({
       _id: deliveryId,
       _type: 'newsletterDelivery',
-      writing: { _type: 'reference', _ref: event._id, _weak: true },
-      title: writing.title,
+      issue: { _type: 'reference', _ref: event._id, _weak: true },
+      title: issue.subject,
       status: 'processing',
-      sendAt,
     })
   } catch (error) {
     if ((error as { statusCode?: number }).statusCode !== 409) throw error
@@ -140,7 +167,7 @@ export async function publishWritingEmail(event: PublicationEvent) {
     if (previous?.status === 'scheduled' || previous?.status === 'draft') {
       return { status: 'duplicate' }
     }
-    // Never repeat a send after a timeout: Kit may already have accepted it.
+    // Kit may already have created the draft even if its response was lost.
     throw new Error(
       `Newsletter delivery ${deliveryId} needs review in Sanity and Kit`,
     )
@@ -159,8 +186,8 @@ export async function publishWritingEmail(event: PublicationEvent) {
         ...email,
         description: deliveryId,
         public: false,
-        published_at: writing.publishedAt,
-        send_at: sendAt,
+        published_at: new Date().toISOString(),
+        send_at: null,
         subscriber_filter: [{ all: [{ type: 'segment', ids: [segmentId] }] }],
       }),
       cache: 'no-store',
@@ -177,11 +204,11 @@ export async function publishWritingEmail(event: PublicationEvent) {
     await client
       .patch(deliveryId)
       .set({
-        status: autoSend ? 'scheduled' : 'draft',
+        status: 'draft',
         broadcastId: result.broadcast.id,
       })
       .commit()
-    return { status: autoSend ? 'scheduled' : 'draft' }
+    return { status: 'draft' }
   } catch (error) {
     await client
       .patch(deliveryId)

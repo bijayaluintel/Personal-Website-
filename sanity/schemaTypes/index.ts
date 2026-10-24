@@ -15,10 +15,12 @@ import {workService} from './workService'
 import {homePage} from './homePage'
 import {siteSettings} from './siteSettings'
 import {newsletterDelivery} from './newsletterDelivery'
+import {newsletterIssue} from './newsletterIssue'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
     newsletterDelivery,
+    newsletterIssue,
     siteSettings,
     awardsPage,
     award,

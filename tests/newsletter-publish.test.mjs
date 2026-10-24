@@ -5,13 +5,23 @@ import vm from 'node:vm'
 import ts from 'typescript'
 import crypto from 'node:crypto'
 
-const event = { _id: 'writing-1', _type: 'writing', operation: 'create' }
+const event = { _id: 'issue-1', _type: 'newsletterIssue', operation: 'create' }
 const writing = {
+  _id: 'article-1',
   title: 'कविता & <Title>',
   excerpt: 'First line\n<script>bad()</script>',
   category: 'poems',
   slug: 'मेरो-कविता',
   publishedAt: '2026-01-01T00:00:00Z',
+}
+const issue = {
+  subject: 'Selected writings',
+  introduction: 'A note & <hello>',
+  articles: [
+    writing,
+    { ...writing, _id: 'article-2', title: 'Second article' },
+    { ...writing, _id: 'article-3', title: 'Third article' },
+  ],
 }
 const env = {
   KIT_API_KEY: 'test',
@@ -47,7 +57,7 @@ function setup(overrides = {}) {
   const calls = []
   const client = {
     fetch: async () =>
-      overrides.writing === undefined ? writing : overrides.writing,
+      overrides.issue === undefined ? issue : overrides.issue,
     create: async (doc) => {
       if (records.has(doc._id))
         throw Object.assign(new Error('Conflict'), { statusCode: 409 })
@@ -86,7 +96,7 @@ function setup(overrides = {}) {
 }
 test('published-create events only; drafts, versions and updates are ignored', () => {
   const p = setup()
-  assert.equal(p.isPublicationEvent(event), true)
+  assert.equal(p.isNewsletterEvent(event), true)
   for (const value of [
     null,
     {},
@@ -94,53 +104,54 @@ test('published-create events only; drafts, versions and updates are ignored', (
     { ...event, _id: 'drafts.writing-1' },
     { ...event, _id: 'versions.release.writing-1' },
     { ...event, _type: 'newsletterDelivery' },
+    { ...event, _type: 'writing' },
   ])
-    assert.equal(p.isPublicationEvent(value), false)
+    assert.equal(p.isNewsletterEvent(value), false)
 })
 test('safe HTML and encoded Nepali URL', () => {
   const p = setup()
-  const email = p.buildWritingEmail(writing, env.SITE_URL)
+  const email = p.buildNewsletterEmail(issue, env.SITE_URL)
   assert.ok(email.content.includes('&lt;script&gt;'))
   assert.ok(!email.content.includes('<script>'))
   assert.ok(email.content.includes(encodeURIComponent(writing.slug)))
   assert.ok(email.content.includes('<br />'))
-  assert.throws(() => p.buildWritingEmail(writing, 'javascript:bad'))
+  assert.throws(() => p.buildNewsletterEmail(issue, 'javascript:bad'))
 })
-test('concurrent and repeated deliveries produce one scheduled broadcast', async () => {
+test('concurrent and repeated deliveries produce one Kit draft', async () => {
   const p = setup()
   await Promise.allSettled([
-    p.publishWritingEmail(event),
-    p.publishWritingEmail(event),
+    p.createNewsletterDraft(event),
+    p.createNewsletterDraft(event),
   ])
   assert.equal(p.calls.length, 1)
-  assert.equal((await p.publishWritingEmail(event)).status, 'duplicate')
+  assert.equal((await p.createNewsletterDraft(event)).status, 'duplicate')
   assert.equal(p.calls.length, 1)
   const body = JSON.parse(p.calls[0].options.body)
   assert.deepEqual(body.subscriber_filter, [
     { all: [{ type: 'segment', ids: [17] }] },
   ])
-  assert.ok(Date.parse(body.send_at) > Date.now())
+  assert.equal(body.send_at, null)
   assert.equal(body.public, false)
-  assert.equal([...p.records.values()][0].status, 'scheduled')
+  assert.equal([...p.records.values()][0].status, 'draft')
 })
-test('draft mode never schedules a send', async () => {
-  const p = setup({ env: { NEWSLETTER_AUTO_SEND: 'false' } })
-  assert.equal((await p.publishWritingEmail(event)).status, 'draft')
+test('old auto-send setting never schedules a send', async () => {
+  const p = setup({ env: { NEWSLETTER_AUTO_SEND: 'true' } })
+  assert.equal((await p.createNewsletterDraft(event)).status, 'draft')
   assert.equal(JSON.parse(p.calls[0].options.body).send_at, null)
 })
 test('missing configuration and invalid content do not reserve or send', async () => {
   for (const options of [
     { env: { KIT_NEWSLETTER_SEGMENT_ID: '' } },
-    { writing: { ...writing, slug: '' } },
+    { issue: { ...issue, articles: [null, ...issue.articles.slice(1)] } },
     { env: { SITE_URL: 'http://example.com' } },
   ]) {
     const p = setup(options)
-    await assert.rejects(p.publishWritingEmail(event))
+    await assert.rejects(p.createNewsletterDraft(event))
     assert.equal(p.records.size, 0)
     assert.equal(p.calls.length, 0)
   }
-  const p = setup({ writing: null })
-  assert.equal((await p.publishWritingEmail(event)).status, 'skipped')
+  const p = setup({ issue: null })
+  await assert.rejects(p.createNewsletterDraft(event))
   assert.equal(p.calls.length, 0)
 })
 test('timeout, provider rejection and failed persistence never trigger another broadcast', async () => {
@@ -150,22 +161,47 @@ test('timeout, provider rejection and failed persistence never trigger another b
     { failFinalWrite: true },
   ]) {
     const p = setup(options)
-    await assert.rejects(p.publishWritingEmail(event))
-    await assert.rejects(p.publishWritingEmail(event))
+    await assert.rejects(p.createNewsletterDraft(event))
+    await assert.rejects(p.createNewsletterDraft(event))
     assert.equal(p.calls.length, 1)
     assert.ok(
       ['failed', 'needsReview'].includes([...p.records.values()][0].status),
     )
   }
 })
-test('future publication dates delay sending', async () => {
-  const future = new Date(Date.now() + 86400000).toISOString()
-  const p = setup({ writing: { ...writing, publishedAt: future } })
-  await p.publishWritingEmail(event)
-  assert.equal(
-    Date.parse(JSON.parse(p.calls[0].options.body).send_at),
-    Date.parse(future) + 300000,
-  )
+test('combines selections in order and accepts either three or four articles', async () => {
+  const p = setup()
+  for (const articles of [
+    issue.articles,
+    [
+      ...issue.articles,
+      { ...writing, _id: 'article-4', title: 'Fourth article' },
+    ],
+  ]) {
+    const email = p.buildNewsletterEmail({ ...issue, articles }, env.SITE_URL)
+    assert.equal((email.content.match(/<h2>/g) || []).length, articles.length)
+    assert.ok(
+      email.content.indexOf('Second article') <
+        email.content.indexOf('Third article'),
+    )
+    assert.ok(email.content.includes('A note &amp; &lt;hello&gt;'))
+  }
+})
+test('rejects duplicate, missing, draft, incomplete and out-of-range selections', () => {
+  const p = setup()
+  for (const articles of [
+    [],
+    issue.articles.slice(0, 2),
+    [...issue.articles, writing, writing],
+    [writing, writing, writing],
+    [null, ...issue.articles.slice(1)],
+    [{ ...writing, _id: 'drafts.article-1' }, ...issue.articles.slice(1)],
+    [{ ...writing, slug: '' }, ...issue.articles.slice(1)],
+  ]) {
+    assert.throws(() =>
+      p.buildNewsletterEmail({ ...issue, articles }, env.SITE_URL),
+    )
+  }
 })
 test('route rejects an invalid signature before publishing', async () => {
   let called = false
@@ -175,8 +211,8 @@ test('route rejects an invalid signature before publishing', async () => {
       name === 'next-sanity/webhook'
         ? { parseBody: async () => ({ body: event, isValidSignature: false }) }
         : {
-            isPublicationEvent: () => true,
-            publishWritingEmail: async () => {
+            isNewsletterEvent: () => true,
+            createNewsletterDraft: async () => {
               called = true
             },
           },
@@ -197,8 +233,8 @@ test('route requires a secret and ignores update events', async () => {
           }),
         }
       : {
-          isPublicationEvent: p.isPublicationEvent,
-          publishWritingEmail: async () => {
+          isNewsletterEvent: p.isNewsletterEvent,
+          createNewsletterDraft: async () => {
             called = true
           },
         }
