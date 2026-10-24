@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { HomeContent } from "@/sanity/lib/home";
+import { AudiobookCard } from "./AudiobookCard";
 
 type QuoteGroup = HomeContent["quotes"][number];
 
@@ -25,7 +26,7 @@ function QuoteCarousel({ group, index }: { group: QuoteGroup; index: number }) {
   const activeItem = group.items[activeIndex];
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || group.items.length < 2) return;
 
     const timer = window.setInterval(() => {
       setTurnDirection("next");
@@ -88,9 +89,11 @@ function QuoteCarousel({ group, index }: { group: QuoteGroup; index: number }) {
 export function QuotesSection({
   heading,
   groups,
+  audiobook,
 }: {
   heading: HomeContent["quotesHeading"];
   groups: HomeContent["quotes"];
+  audiobook: HomeContent["audiobook"];
 }) {
   return (
     <section className="quotes-section section-shell" id="quotes">
@@ -104,9 +107,10 @@ export function QuotesSection({
         </p>
       </div>
       <div className="quotes-grid">
-        {groups.map((group, index) => (
+        {groups.filter((group) => group.items.length > 0).map((group, index) => (
           <QuoteCarousel group={group} index={index} key={group.type} />
         ))}
+        <AudiobookCard audiobook={audiobook} />
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import {HomeIcon} from '@sanity/icons'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {DEFAULT_SPOTIFY_URL, getSpotifyTrackId} from '../lib/spotify'
 
 const linkFields = [
   defineField({name: 'label', title: 'Label', type: 'string', validation: (rule) => rule.required()}),
@@ -30,7 +31,7 @@ export const homePage = defineType({
   groups: [
     {name: 'hero', title: 'Hero'},
     {name: 'book', title: 'Book'},
-    {name: 'quotes', title: 'Quotes & reader notes'},
+    {name: 'quotes', title: 'Quotes & audiobook'},
     {name: 'newsletter', title: 'Newsletter'},
     {name: 'featured', title: 'Featured posts'},
   ],
@@ -76,8 +77,12 @@ export const homePage = defineType({
     defineField({name: 'quotesDescription', title: 'Section description', type: 'text', rows: 3, group: 'quotes', validation: (rule) => rule.required()}),
     defineField({name: 'quotesLabel', title: 'Quotes card label', type: 'string', group: 'quotes', initialValue: 'Quotes', validation: (rule) => rule.required()}),
     defineField({name: 'quotes', title: 'Quotes', type: 'array', group: 'quotes', of: [defineArrayMember({name: 'quoteItem', title: 'Quote', type: 'object', fields: quoteFields})], validation: (rule) => rule.required().min(1)}),
-    defineField({name: 'readerNotesLabel', title: 'Reader notes card label', type: 'string', group: 'quotes', initialValue: 'Reader’s notes', validation: (rule) => rule.required()}),
-    defineField({name: 'readerNotes', title: 'Reader notes', type: 'array', group: 'quotes', of: [defineArrayMember({name: 'readerNote', title: 'Reader note', type: 'object', fields: quoteFields})], validation: (rule) => rule.required().min(1)}),
+    // Keep legacy data in Sanity while the audiobook replaces this card on the website.
+    defineField({name: 'readerNotesLabel', title: 'Reader notes card label (legacy)', type: 'string', group: 'quotes', hidden: true, readOnly: true}),
+    defineField({name: 'readerNotes', title: 'Reader notes (legacy)', type: 'array', group: 'quotes', hidden: true, readOnly: true, of: [defineArrayMember({name: 'readerNote', title: 'Reader note', type: 'object', fields: quoteFields})]}),
+    defineField({name: 'audiobookLabel', title: 'Audiobook card label', type: 'string', group: 'quotes', initialValue: 'Audiobook'}),
+    defineField({name: 'audiobookDescription', title: 'Audiobook description', type: 'text', rows: 2, group: 'quotes', initialValue: 'Listen to the audiobook on Spotify.'}),
+    defineField({name: 'audiobookSpotifyUrl', title: 'Spotify audiobook link', type: 'url', group: 'quotes', initialValue: DEFAULT_SPOTIFY_URL, description: 'Paste the Spotify track link. Leave empty to use the original audiobook.', validation: (rule) => rule.custom((value) => !value || getSpotifyTrackId(value) ? true : 'Enter an HTTPS Spotify track link, such as https://open.spotify.com/track/…')}),
 
     defineField({name: 'newsletterEyebrow', title: 'Eyebrow', type: 'string', group: 'newsletter', validation: (rule) => rule.required()}),
     defineField({name: 'newsletterTitle', title: 'Title', type: 'string', group: 'newsletter', validation: (rule) => rule.required()}),

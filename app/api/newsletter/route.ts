@@ -1,17 +1,14 @@
-import { createHash } from "node:crypto";
-
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-type MailchimpError = {
-  detail?: string;
-  title?: string;
-};
 
 export async function POST(request: Request) {
   let payload: { email?: unknown; website?: unknown };
 
   try {
-    payload = (await request.json()) as typeof payload;
+    const body: unknown = await request.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return Response.json({ message: "Please submit a valid email address." }, { status: 400 });
+    }
+    payload = body as typeof payload;
   } catch {
     return Response.json({ message: "Please submit a valid email address." }, { status: 400 });
   }
@@ -28,12 +25,10 @@ export async function POST(request: Request) {
     return Response.json({ message: "Please enter a valid email address." }, { status: 400 });
   }
 
-  const apiKey = process.env.MAILCHIMP_API_KEY;
-  const audienceId = process.env.MAILCHIMP_AUDIENCE_ID;
-  const serverPrefix =
-    process.env.MAILCHIMP_SERVER_PREFIX ?? apiKey?.split("-").at(-1);
+  const apiKey = process.env.KIT_API_KEY;
+  const formId = process.env.KIT_FORM_ID;
 
-  if (!apiKey || !audienceId || !serverPrefix) {
+  if (!apiKey || !formId || !/^\d+$/.test(formId)) {
     return Response.json(
       {
         message:
@@ -43,47 +38,50 @@ export async function POST(request: Request) {
     );
   }
 
-  const subscriberHash = createHash("md5").update(email).digest("hex");
-  const endpoint =
-    `https://${serverPrefix}.api.mailchimp.com/3.0/lists/` +
-    `${encodeURIComponent(audienceId)}/members/${subscriberHash}`;
-
   try {
-    const response = await fetch(endpoint, {
-      body: JSON.stringify({
-        email_address: email,
-        status_if_new: "pending",
-      }),
+    const headers = {
+      "X-Kit-Api-Key": apiKey,
+      "Content-Type": "application/json",
+    };
+    // Kit requires a subscriber to exist before they can join a form.
+    // New subscribers wait for confirmation; existing subscribers keep their state.
+    const subscriberResponse = await fetch("https://api.kit.com/v4/subscribers", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ email_address: email, state: "inactive" }),
       cache: "no-store",
-      headers: {
-        Authorization: `Basic ${Buffer.from(`website:${apiKey}`).toString("base64")}`,
-        "Content-Type": "application/json",
-      },
-      method: "PUT",
+      signal: AbortSignal.timeout(10000),
     });
 
-    if (!response.ok) {
-      const providerError = (await response.json().catch(() => ({}))) as MailchimpError;
-      console.error("Mailchimp subscription failed:", {
-        detail: providerError.detail,
-        status: response.status,
-        title: providerError.title,
-      });
-      return Response.json(
-        { message: "We couldn’t complete your subscription. Please try again later." },
-        { status: 502 },
-      );
+    if (!subscriberResponse.ok) {
+      console.error("Kit subscriber creation failed:", subscriberResponse.status);
+      throw new Error("Kit subscriber creation failed");
     }
 
-    const member = (await response.json()) as { status?: string };
-    const message =
-      member.status === "subscribed"
-        ? "You’re already subscribed to the newsletter."
-        : "Please check your inbox to confirm your subscription.";
+    const response = await fetch(
+      `https://api.kit.com/v4/forms/${encodeURIComponent(formId)}/subscribers`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ email_address: email }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      },
+    );
+
+    if (!response.ok) {
+      console.error("Kit form subscription failed:", response.status);
+      throw new Error("Kit form subscription failed");
+    }
+
+    const result = (await response.json()) as { subscriber?: { state?: string } };
+    const message = result.subscriber?.state === "active"
+      ? "You’re subscribed to the newsletter."
+      : "Please check your inbox to confirm your subscription.";
 
     return Response.json({ message });
-  } catch (error) {
-    console.error("Mailchimp subscription failed:", error);
+  } catch {
+    // Keep provider responses, subscriber details, and credentials out of client errors.
     return Response.json(
       { message: "We couldn’t complete your subscription. Please try again later." },
       { status: 502 },

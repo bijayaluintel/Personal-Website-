@@ -14,9 +14,11 @@ import {workPortfolioItem} from './workPortfolioItem'
 import {workService} from './workService'
 import {homePage} from './homePage'
 import {siteSettings} from './siteSettings'
+import {newsletterDelivery} from './newsletterDelivery'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
+    newsletterDelivery,
     siteSettings,
     awardsPage,
     award,

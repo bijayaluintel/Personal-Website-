@@ -21,7 +21,10 @@ export default defineConfig({
   // Add and edit the content schema in the './sanity/schemaTypes' folder
   schema,
   document: {
-    actions: writingDocumentActions,
+    actions: (actions, context) => context.schemaType === 'newsletterDelivery'
+      ? []
+      : writingDocumentActions(actions, context),
+    newDocumentOptions: (options) => options.filter((option) => option.templateId !== 'newsletterDelivery'),
   },
   plugins: [
     structureTool({structure}),

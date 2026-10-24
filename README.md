@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+For automatic Kit emails when a poem or article is published in Sanity, see
+[Newsletter automation setup](docs/newsletter-automation.md).
+
 First, run the development server:
 
 ```bash

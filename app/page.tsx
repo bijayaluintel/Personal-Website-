@@ -18,7 +18,7 @@ export default async function Home() {
       <main id="top">
         <HeroSection hero={content.hero} />
         <BookSection book={content.book} />
-        <QuotesSection groups={content.quotes} heading={content.quotesHeading} />
+        <QuotesSection groups={content.quotes} heading={content.quotesHeading} audiobook={content.audiobook} />
         <SubscribeSection newsletter={content.newsletter} />
         <WritingsSection heading={content.featuredHeading} posts={content.writings} />
       </main>

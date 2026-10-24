@@ -71,6 +71,9 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('writing')
         .title('Writing Articles')
         .icon(DocumentTextIcon),
+      S.documentTypeListItem('newsletterDelivery')
+        .title('Newsletter Deliveries')
+        .icon(DocumentTextIcon),
       S.divider(),
       S.listItem()
         .title('Videos Page')
