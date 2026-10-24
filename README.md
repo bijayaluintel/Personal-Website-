@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-For creating a Kit draft from 3–4 selected articles in Sanity, see
+For creating a Kit draft from one or more selected articles in Sanity, see
 [Newsletter issue setup](docs/newsletter-automation.md).
 
 First, run the development server:

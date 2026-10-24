@@ -1,6 +1,6 @@
 # Curated newsletters: Sanity → Kit draft → client sends
 
-The client chooses 3–4 already published poems or articles, arranges them, and creates **one Kit draft**. The client reviews that email and sends or schedules it in Kit. Publishing or updating an article does not create or send an email.
+The client chooses one or more already published poems or articles, arranges them, and creates **one Kit draft**. The client reviews that email and sends or schedules it in Kit. Publishing or updating an article does not create or send an email.
 
 ## After upgrading from the old article automation
 
@@ -63,7 +63,7 @@ The **Create draft in Kit** action uses Sanity's validated publish operation on 
 1. Publish articles normally in Sanity, or use articles already on the website.
 2. Open **Newsletter Issues → New**.
 3. Enter an email subject and optional introduction.
-4. Select **3–4 distinct published writings** and drag them into the desired order. Each must have a title, excerpt, category and URL slug. The backend reads published content, excluding unpublished edits.
+4. Select **one or more distinct published writings** and drag them into the desired order. Each must have a title, excerpt, category and URL slug. The backend reads published content, excluding unpublished edits.
 5. Click **Create draft in Kit**. This prepares an email; it does not send it.
 6. Check **Newsletter Deliveries** for a `draft` entry and Kit broadcast ID. The issue button says “Draft requested” after publishing; that alone does not confirm webhook success.
 7. Open **Kit → Broadcasts** and find the draft by its subject.

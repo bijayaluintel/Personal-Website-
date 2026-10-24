@@ -26,7 +26,7 @@ export const newsletterIssue = defineType({
       title: 'Selected articles',
       type: 'array',
       description:
-        'Choose 3–4 published poems or articles. Drag them into the order you want in the email.',
+        'Choose one or more published poems or articles. Drag them into the order you want in the email.',
       of: [
         defineArrayMember({
           type: 'reference',
@@ -38,7 +38,7 @@ export const newsletterIssue = defineType({
           },
         }),
       ],
-      validation: (rule) => rule.required().min(3).max(4).unique(),
+      validation: (rule) => rule.required().min(1).unique(),
     }),
   ],
   preview: {

@@ -44,11 +44,10 @@ export function buildNewsletterEmail(issue: NewsletterIssue, siteUrl: string) {
   if (
     !issue.subject?.trim() ||
     !Array.isArray(issue.articles) ||
-    issue.articles.length < 3 ||
-    issue.articles.length > 4
+    issue.articles.length < 1
   ) {
     throw new Error(
-      'Select 3–4 published articles and enter a newsletter subject',
+      'Select at least one published article and enter a newsletter subject',
     )
   }
   const ids = new Set<string>()

@@ -169,29 +169,27 @@ test('timeout, provider rejection and failed persistence never trigger another b
     )
   }
 })
-test('combines selections in order and accepts either three or four articles', async () => {
+test('accepts one, two and larger selections and preserves article order', () => {
   const p = setup()
-  for (const articles of [
-    issue.articles,
-    [
-      ...issue.articles,
-      { ...writing, _id: 'article-4', title: 'Fourth article' },
-    ],
-  ]) {
+  for (const count of [1, 2, 3, 4, 5, 20]) {
+    const articles = Array.from({length: count}, (_, index) => ({
+      ...writing, _id: `article-${index}`, title: `Selected article ${index}`,
+    }))
     const email = p.buildNewsletterEmail({ ...issue, articles }, env.SITE_URL)
-    assert.equal((email.content.match(/<h2>/g) || []).length, articles.length)
-    assert.ok(
-      email.content.indexOf('Second article') <
-        email.content.indexOf('Third article'),
-    )
+    assert.equal((email.content.match(/<h2>/g) || []).length, count)
+    let previous = -1
+    for (const article of articles) {
+      const position = email.content.indexOf(`<h2>${article.title}</h2>`)
+      assert.ok(position > previous)
+      previous = position
+    }
     assert.ok(email.content.includes('A note &amp; &lt;hello&gt;'))
   }
 })
-test('rejects duplicate, missing, draft, incomplete and out-of-range selections', () => {
+test('rejects duplicate, missing, draft, incomplete and empty selections', () => {
   const p = setup()
   for (const articles of [
     [],
-    issue.articles.slice(0, 2),
     [...issue.articles, writing, writing],
     [writing, writing, writing],
     [null, ...issue.articles.slice(1)],
