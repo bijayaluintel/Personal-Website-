@@ -5,10 +5,9 @@ import { ArrowIcon } from "./ArrowIcon";
 
 export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
   return (
-    <section className="hero section-shell" id="about">
+    <section className="hero hero-editorial section-shell" id="about">
       <div className="hero-copy">
-        <h1>{hero.title}</h1>
-        <p className="hero-roles">{hero.roles}</p>
+        <p className="eyebrow">About me</p>
         <div className="hero-tagline" style={{ textAlign: hero.taglineAlignment }}>
           {hero.tagline.split(/\r?\n+/).map((paragraph) => paragraph.trim()).filter(Boolean).map((paragraph, index) => (
             <p key={`${index}-${paragraph}`}>{paragraph}</p>
@@ -26,7 +25,7 @@ export function HeroSection({ hero }: { hero: HomeContent["hero"] }) {
       <div className="hero-visual">
         <div className="hero-image-frame">
           <div className="hero-photo-mat">
-            <Image alt={hero.imageAlt} fill priority sizes="(max-width: 760px) 76vw, 38vw" src={hero.image} />
+            <Image alt={hero.imageAlt} fill priority sizes="(max-width: 700px) 90vw, 40vw" src={hero.image} />
           </div>
         </div>
         {/* <p className="image-note">Words for the spaces in between.</p> */}

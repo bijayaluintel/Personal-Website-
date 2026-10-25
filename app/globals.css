@@ -9,7 +9,7 @@
   --sage-dark: #424c3f;
   --rust: #ad4e35;
   --paper-accent: var(--sage);
-  --hero-bg: #eef0e7;
+  --hero-bg: #e9e5dc;
   --line: rgba(31, 35, 30, 0.17);
   --font-sans: var(--font-noto-sans-devanagari), "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-noto-serif-devanagari), Georgia, "Times New Roman", serif;
@@ -3500,4 +3500,110 @@ a, button { -webkit-tap-highlight-color: transparent; }
     opacity: 1;
     transform: none;
   }
+}
+
+/* Homepage masthead and portrait: a simple author-led layout. */
+.has-masthead {
+  backdrop-filter: none;
+  background: var(--hero-bg);
+  border: 0;
+  position: relative;
+}
+.author-masthead {
+  margin-inline: auto;
+  max-width: 1340px;
+  padding: 42px 32px 30px;
+  text-align: center;
+}
+.author-masthead h1 {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(42px, 6.4vw, 88px);
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  line-height: 1.15;
+  margin: 0;
+  text-transform: uppercase;
+}
+.has-masthead .site-header {
+  background: var(--sage-dark);
+  border: 1px solid rgba(250, 248, 243, 0.12);
+  border-radius: 0;
+  box-shadow: 0 8px 24px rgba(31, 35, 30, 0.08);
+  color: var(--paper-light);
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  height: auto;
+  min-height: 64px;
+  max-width: none;
+  padding-inline: 22px;
+  width: 100%;
+  position: relative;
+}
+.masthead-roles {
+  color: var(--sage-dark);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  line-height: 1.8;
+  margin: 2px 0 0;
+}
+.has-masthead .nav-list { gap: 4px; }
+.has-masthead .nav-item > a { border-radius: 6px; padding: 12px 14px; }
+.has-masthead .header-contact:hover { background: rgba(250, 248, 243, 0.18); transform: none; }
+.has-masthead .nav-dropdown { border-radius: 10px; }
+.has-masthead .site-header :focus-visible { outline-color: var(--sage); }
+.mobile-nav-label { display: none; }
+.has-masthead .header-contact {
+  background: rgba(250, 248, 243, 0.1);
+  border: 1px solid rgba(250, 248, 243, 0.22);
+  border-radius: 6px;
+  min-height: 38px;
+  padding-inline: 16px;
+}
+.has-masthead .nav-item > a:hover,
+.has-masthead .nav-item:focus-within > a { background: rgba(255, 255, 255, 0.08); color: var(--sage); }
+.has-masthead .nav-dropdown { color: var(--ink); }
+.hero-editorial {
+  align-items: center;
+  background: var(--hero-bg);
+  gap: clamp(40px, 6vw, 88px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  padding-top: 64px;
+  padding-bottom: 72px;
+}
+.hero-editorial::after { content: none; }
+.hero-editorial .hero-tagline { font-size: clamp(21px, 1.9vw, 27px); line-height: 1.65; }
+.hero-editorial .hero-visual {
+  align-self: center;
+  margin: 0;
+  max-width: 460px;
+  width: 100%;
+}
+.hero-editorial .hero-image-frame {
+  aspect-ratio: 1100 / 1665;
+  background: transparent;
+  clip-path: none;
+  transform: none;
+}
+.hero-editorial .hero-image-frame::before { content: none; }
+.hero-editorial .hero-photo-mat { clip-path: none; inset: 0; }
+.hero-editorial .hero-photo-mat img { filter: none; object-fit: contain; object-position: center bottom; }
+@media (max-width: 1120px) {
+  .has-masthead .site-header { justify-content: space-between; }
+  .has-masthead .mobile-nav-label { display: block; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .has-masthead .primary-nav { border-radius: 0 0 12px 12px; color: var(--ink); max-height: 70dvh; overflow-y: auto; }
+  .has-masthead .menu-toggle { border-color: rgba(250, 248, 243, 0.35); }
+  .has-masthead .menu-toggle span { background: var(--paper-light); }
+  .has-masthead .nav-item > a:hover,
+  .has-masthead .nav-item:focus-within > a { color: var(--rust); }
+}
+@media (max-width: 700px) {
+  .author-masthead { padding: 30px 22px 24px; }
+  .has-masthead .site-header { min-height: 58px; padding-inline: 16px; width: 100%; }
+  .masthead-roles { font-size: 11px; letter-spacing: 0.06em; padding-inline: 8px; }
+  .author-masthead h1 { font-size: clamp(32px, 8vw, 52px); letter-spacing: 0; }
+  .hero-editorial { grid-template-columns: 1fr; gap: 36px; padding: 38px 22px 48px; }
+  .hero-editorial .hero-visual { justify-self: center; max-width: 360px; }
+  .hero-editorial .hero-tagline { font-size: 20px; margin-block: 20px 28px; }
 }

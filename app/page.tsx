@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader mastheadTitle={content.hero.title || "Bijaya Luintel"} mastheadRoles={content.hero.roles} />
       <main id="top">
         <HeroSection hero={content.hero} />
         <BookSection book={content.book} />

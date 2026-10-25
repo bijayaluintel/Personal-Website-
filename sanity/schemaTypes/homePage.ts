@@ -46,7 +46,7 @@ export const homePage = defineType({
       title: 'Hero cutout portrait',
       type: 'image',
       group: 'hero',
-      description: 'Upload a PNG or WebP with a transparent background. It will use the current hero size, position, and torn-edge overlap.',
+      description: 'Upload a PNG or WebP with a transparent background to blend the portrait into the homepage background. Leave empty to use the built-in portrait.',
       options: {hotspot: true},
       fields: [
         defineField({

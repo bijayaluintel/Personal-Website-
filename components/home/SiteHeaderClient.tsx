@@ -22,13 +22,19 @@ function PenIcon() {
   )
 }
 
-export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
+export function SiteHeaderClient({settings, mastheadTitle, mastheadRoles}: {settings: SiteSettings; mastheadTitle?: string; mastheadRoles?: string}) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="site-header-wrap">
+    <header className={mastheadTitle ? 'site-header-wrap has-masthead' : 'site-header-wrap'}>
+      {mastheadTitle ? (
+        <div className="author-masthead">
+          <h1><Link href="/">{mastheadTitle}</Link></h1>
+          {mastheadRoles ? <p className="masthead-roles">{mastheadRoles}</p> : null}
+        </div>
+      ) : null}
       <div className="site-header">
-        <Link
+        {!mastheadTitle ? <Link
           className="site-identity"
           href="/"
           aria-label={`${settings.siteName}, home`}
@@ -43,9 +49,9 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
             style={{height: settings.headerLogoSize, width: settings.headerLogoSize}}
             width={74}
           />
-        </Link>
+        </Link> : <span className="mobile-nav-label">Explore</span>}
 
-        <nav aria-label="Primary navigation" className={menuOpen ? 'primary-nav is-open' : 'primary-nav'}>
+        <nav id="primary-navigation" aria-label="Primary navigation" className={menuOpen ? 'primary-nav is-open' : 'primary-nav'}>
           <ul className="nav-list">
             {settings.navigation.map((item) => (
               <li className={item.children?.length ? 'nav-item has-submenu' : 'nav-item'} key={`${item.label}-${item.href}`}>
@@ -80,6 +86,7 @@ export function SiteHeaderClient({settings}: {settings: SiteSettings}) {
         </a>
 
         <button
+          aria-controls="primary-navigation"
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           className={menuOpen ? 'menu-toggle is-open' : 'menu-toggle'}
