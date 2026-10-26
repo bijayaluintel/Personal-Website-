@@ -20,7 +20,7 @@ const notoSerifDevanagari = Noto_Serif_Devanagari({
 });
 
 export const metadata: Metadata = {
-  title: "Bijaya Luintel — Poet & Writer",
+  title: "Bijaya Luintel",
   description: "The official website of Bijaya Luintel—poems, essays, books, and occasional letters.",
 };
 
