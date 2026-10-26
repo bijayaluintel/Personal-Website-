@@ -54,6 +54,13 @@ const HOME_QUERY = defineQuery(/* groq */ `
   }
 `)
 
+const MASTHEAD_QUERY = defineQuery(/* groq */ `*[_type == "homePage" && _id == "homePage"][0]{heroTitle, heroRoles}`)
+
+export async function getMastheadContent() {
+  const data = await client.fetch<Pick<HomeDocument, 'heroTitle' | 'heroRoles'> | null>(MASTHEAD_QUERY, {}, {next: {revalidate: 60, tags: ['home']}})
+  return {title: data?.heroTitle || 'Bijaya Luintel', roles: data?.heroRoles || ''}
+}
+
 function imageUrl(image: ImageValue | undefined, width: number) {
   return image ? urlFor(image).width(width).quality(85).auto('format').url() : ''
 }
